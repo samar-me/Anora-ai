@@ -1,0 +1,23 @@
+{
+  "name": "Samar",
+  "age": "16",
+  "location": "Qashqadaryo viloyati, Yakkabog' tumani, Jeyda qishlog'i",
+  "school": "Maktab o'quvchisi",
+  "profession": "Bo'lajak kuchli dasturchi va IT tadbirkor",
+  "interests": [
+    "Dasturlash (IT)",
+    "Boks / Sport",
+    "Biznes va moliya",
+    "Ingliz tili",
+    "Kitob mutolaasi"
+  ],
+  "strengths": [
+    "Intizom",
+    "Mehnatsevarlik",
+    "Yangi bilimlarga chanqoqlik"
+  ],
+  "longTermDream": "Amerikada ta'lim olish hamda milliard dollarlik shaxsiy IT biznes imperiyasini barpo etish",
+  "customFacts": [
+    "To'liq ismi: Samar Baxtiyorov Suratovich. Repetitorlik — asosiy kasb emas, maqsadi sari bir bosqich."
+  ]
+}

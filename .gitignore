@@ -1,0 +1,6 @@
+node_modules/
+.env
+samara_bot/node_modules/
+samara_bot/.env
+samara_bot/backups/
+*.log
