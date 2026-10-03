@@ -20,6 +20,7 @@ const review = require('./services/review');
 const english = require('./services/english');
 const coder = require('./services/coder');
 const backup = require('./services/backup');
+const fitness = require('./services/fitness');
 
 require('dotenv').config();
 
@@ -226,6 +227,20 @@ bot.command(['english', 'ingliz'], async (ctx) => {
 bot.command(['kod', 'debug'], async (ctx) => {
   saveChatId(ctx.chat.id);
   await ctx.reply('💻 Xatolik berayotgan kodni, xatolik matnini yoki dasturlash bo\'yicha savolingizni yuboring — darhol tahlil qilib to\'g\'irlab beraman!');
+});
+
+// /sport command (Fitness stats & Personal Records)
+bot.command('sport', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const s = fitness.getFitnessSummary();
+  await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// /mashq command (Daily workout routine from coach)
+bot.command('mashq', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const p = fitness.getDailyWorkoutProgram();
+  await ctx.reply(p, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
 });
 
 // Callback queries for School Check-in
@@ -462,7 +477,21 @@ bot.on('message:text', async (ctx) => {
     return;
   }
 
-  // 6. Tugma: 📋 Bugun
+  // 6. Sport va Rekordlar
+  if (lower === 'sport' || lower === 'rekordlarim' || lower === 'sportim' || lower === 'rekordlar') {
+    const s = fitness.getFitnessSummary();
+    await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    return;
+  }
+
+  // 7. Mashq dasturi
+  if (lower === 'mashq' || lower === 'mashqlar' || lower === 'mashq dasturi' || lower === 'bugungi mashq' || lower === 'mashq ber') {
+    const p = fitness.getDailyWorkoutProgram();
+    await ctx.reply(p, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    return;
+  }
+
+  // 8. Tugma: 📋 Bugun
   if (text === '📋 Bugun') {
     await ctx.replyWithChatAction('typing');
     try {

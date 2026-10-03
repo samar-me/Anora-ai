@@ -10,6 +10,7 @@ const profile = require('./profile');
 const books = require('./books');
 const timer = require('./timer');
 const backup = require('./backup');
+const fitness = require('./fitness');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -280,6 +281,33 @@ const tools = [
           properties: {},
         },
       },
+      {
+        name: 'record_workout',
+        description: 'Bajarilgan sport mashg\'ulotini (turnik, anjimaniya, zal, yugurish, calisthenics) qayd qilish, shaxsiy rekordlarni yangilash va zanjirni davom ettirish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            description: { type: Type.STRING, description: 'Mashqlar va natijalar tavsifi (masalan: "15 ta turnik, 30 ta anjimaniya", "3 km yugurdim")' },
+          },
+          required: ['description'],
+        },
+      },
+      {
+        name: 'get_workout_plan',
+        description: 'Bugungi kun uchun professional sport mashg\'uloti dasturini (sets, reps, dam olish va ovqatlanish tavsiyalari) ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'get_fitness_stats',
+        description: 'Samarning sport natijalari, shaxsiy rekordlari (PR) va mashg\'ulotlar tarixini ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
     ],
   },
 ];
@@ -323,6 +351,13 @@ ${profSummary}
 1. HECH QACHON o'tmishdagi eski ishlarni (masalan, naushnik, eski narsalarni) Samar o'zi so'ramasa, o'zingdan to'qib gapga suqma!
 2. Faqat va faqat Samar HOZIR nima aytgan bo'lsa, o'shanga aniq, to'g'ri va xolis javob ber.
 3. Agar Samar aniq "bugun nima rejam bor?" deb so'rasagina 'get_today_plan' orqali rejalarni ochib ayt.
+
+## 🏋️‍♂️ SPORT VA CHEMPION MURABBIY QOIDALARI:
+1. Sen Samarning shaxsiy SPORT MURABBIYIsan (Calisthenics & Fitness Coach)!
+2. Samar turnik, anjimaniya, zal, yugurish yoki mashq qilganini aytsa (masalan: "15 ta turnik qildim", "sport qildim", "zalga bordim", "rekord qo'ydim") — darhol 'record_workout' funksiyasini chaqir!
+3. Natijani qayd qilib, unga mardona, chempiondek kuchli motivatsiya ber ("Barakalla, sherdek kuchlisiz!", "Zanjir uzilmadi!").
+4. Agar Samar "qanday mashq qilay?", "bugungi dastur", "mashq ber" desa — 'get_workout_plan' chaqir.
+5. Agar texnika, to'g'ri nafas olish yoki ovqatlanish haqida so'rasa — professional murabbiydek amaliy maslahat ber.
 
 ## ⚡ JAVOB OHANGI:
 1. Qisqa, lo'nda va samimiy bo'l (1-3 qatordan oshmasin, "###" yoki "---" ishlatma).
@@ -523,6 +558,23 @@ async function executeTool(name, args, context = {}) {
           return { success: false, message: `Zaxiralashda xatolik: ${res.error}` };
         }
         return { success: false, message: 'Bot aloqasi mavjud emas.' };
+      }
+
+      case 'record_workout': {
+        const res = fitness.recordWorkout({ description: args.description });
+        let msg = `💪 Sport qayd etildi! Uzluksiz zanjir: ${res.streakCount} kun!`;
+        if (res.newPrMessage) {
+          msg = `${res.newPrMessage}\n${msg}`;
+        }
+        return { success: true, message: msg };
+      }
+
+      case 'get_workout_plan': {
+        return { success: true, plan: fitness.getDailyWorkoutProgram() };
+      }
+
+      case 'get_fitness_stats': {
+        return { success: true, stats: fitness.getFitnessSummary() };
       }
 
       default:

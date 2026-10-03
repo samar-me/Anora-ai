@@ -102,4 +102,5 @@ Zanjirni uzmang, chempion! 🦁`;
 module.exports = {
   updateHabitStreak,
   getStreakSummary,
+  loadStreaks,
 };
