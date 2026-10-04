@@ -1,9 +1,11 @@
 {
   "name": "Samar",
   "fullName": "Samar Baxtiyorov",
-  "tagline": "16 yoshli Full-Stack Dasturchi, AI Muhandis & O'quv Markazi Ustozi",
-  "location": "Qashqadaryo, O'zbekiston",
-  "bio": "Men 16 yoshli dasturchi va repetitorman. Murakkab tizimlar, Telegram botlar, AI yordamchilari yaratishga va yoshlarga dasturlashni o'rgatishga ishtiyoqmandman. Maqsadim: Xalqaro darajadagi top muhandis bo'lish va dunyoni o'zgartiruvchi texnologiyalar yaratish.",
+  "age": 16,
+  "role": "Full-Stack Dasturchi & AI Muhandis",
+  "tagline": "16 yoshli Full-Stack Dasturchi, AI Tizimlar Arxitektori & TECH BRIDGE hamda Zamin Ustozi",
+  "location": "Qashqadaryo, Yakkabog', O'zbekiston",
+  "bio": "Men 16 yoshli iqtidorli dasturchi va repetitorman. Murakkab Node.js tizimlari, Telegram AI agentlari (Anora), geymifikatsiya operatsion tizimlari va zamonaviy veb-ilovalarni noldan arxitektura qilaman. Kuniga 15+ turnik tortilaman, FAANG algoritmlarini yechaman va o'quv markazlarida yoshlarga dasturlashdan saboq beraman. Katta maqsadim — jahon darajasidagi texnologik lider bo'lish va Cadillac Escalade olish.",
   "socials": {
     "telegram": "https://t.me/samara_my_ai_bot",
     "github": "https://github.com",
@@ -12,52 +14,89 @@
   "stats": {
     "leetcodeSolved": "50+",
     "pullUpsPR": "15+",
-    "pushUpsPR": "30+",
-    "studentsTaught": "20+",
-    "englishLevel": "C1 (Target)"
+    "pushUpsPR": "35+",
+    "studentsTaught": "25+",
+    "englishLevel": "C1 (Target)",
+    "deepWorkHours": "120+ soat",
+    "rpgLevel": 3,
+    "rpgRank": "D-Rank Elite Hunter",
+    "dreamFundPercent": 2
   },
   "skills": [
-    "JavaScript / ES6+",
-    "Node.js & Express",
-    "Google Gemini AI API",
-    "Python",
-    "PostgreSQL & Supabase",
-    "Telegram Bot Architecture",
-    "Git & GitHub",
-    "TailwindCSS"
+    { "name": "JavaScript / TypeScript", "level": 92, "category": "Frontend & Backend" },
+    { "name": "Node.js & Express / Fastify", "level": 90, "category": "Backend" },
+    { "name": "Google Gemini 3.8 / LLM Engineering", "level": 95, "category": "AI / ML" },
+    { "name": "Telegram Bot Architecture (GrammY)", "level": 98, "category": "Bot Engineering" },
+    { "name": "TailwindCSS & Modern Web UI", "level": 92, "category": "Frontend" },
+    { "name": "PostgreSQL & Supabase & Redis", "level": 82, "category": "Databases" },
+    { "name": "Git & GitHub Automation", "level": 88, "category": "DevOps" },
+    { "name": "Data Structures & Algorithms (DSA)", "level": 80, "category": "Computer Science" },
+    { "name": "Obsidian Second Brain PKM", "level": 95, "category": "Productivity" }
   ],
   "experience": [
     {
-      "role": "Dasturlash Ustozi",
+      "role": "Bosh Dasturlash Ustozi (Mentor)",
       "company": "TECH BRIDGE Academy & Zamin O'quv Markazi",
-      "period": "2026 - Hozirgacha",
-      "desc": "O'quvchilarga dasturlash asoslari, veb-texnologiyalar va sun'iy intellekt vositalarini o'rgatish."
+      "period": "2025 - Hozirgacha",
+      "desc": "O'quvchilarga JavaScript, Web dasturlash, mantiqiy algoritmlar va sun'iy intellekt integratsiyasini amaliy o'rgatish. 25+ dan ortiq muvaffaqiyatli shogirdlar tayyorlandi."
     },
     {
-      "role": "AI Arxitektori & Asoschi",
-      "company": "Anora AI (Second Brain Ecosystem)",
+      "role": "Bosh Arxitektor & Muhandis",
+      "company": "Anora AI — Shaxsiy Operatsion Tizim (Second Brain)",
       "period": "2026",
-      "desc": "Shaxsiy hayot, sport, moliya va dasturlashni boshqaruvchi shaxsiy AI operatsion tizimini ishlab chiqish."
+      "desc": "Google Gemini, Node.js va Telegram bot orqali ishlovchi to'liq avtonom shaxsiy sun'iy intellekt ekotizimi: ovozli boshqaruv, moliya, CRM 2.0, Solo Leveling RPG va tungi tahlil."
     }
   ],
   "projects": [
     {
-      "title": "Anora AI — Shaxsiy Murabbiy & Second Brain",
-      "desc": "Google Gemini 3.8 Flash, Node.js va Telegram Bot asosida qurilgan to'liq shaxsiy intellekt tizimi.",
-      "tags": ["Node.js", "AI", "Telegram", "Obsidian"],
-      "link": "https://t.me/samara_my_ai_bot"
+      "id": "anora-ai",
+      "category": "ai",
+      "title": "Anora AI — Shaxsiy Kotiba & Second Brain",
+      "badge": "Top Loyiha 🌟",
+      "desc": "Google Gemini 3.8 Flash, Node.js va Telegram Bot asosidagi to'liq shaxsiy intellekt tizimi. Ovozli xabarlarni tushunadi, rejalashtiradi va Obsidian'ni sinxronlashtiradi.",
+      "tags": ["Node.js", "Gemini 3.8", "Telegram API", "Obsidian Vault"],
+      "demoType": "chat",
+      "demoButton": "💬 Anora bilan jonli suhbat"
     },
     {
+      "id": "solo-leveling",
+      "category": "rpg",
       "title": "Solo Leveling RPG Life Engine",
-      "desc": "Real hayotiy intizomni o'yinga aylantiruvchi, XP va darajalarni hisoblovchi geymifikatsiya moduli.",
-      "tags": ["Gamification", "Node.js", "Habits"],
-      "link": "#"
+      "badge": "Geymifikatsiya 🎮",
+      "desc": "Real hayotiy intizomni (sport, kitob, dasturlash, suv) manhva qahramonidek darajalar va XP tizimiga aylantiruvchi geymifikatsiya dvigateli.",
+      "tags": ["Gamification", "State Engine", "Local Storage", "Sound FX"],
+      "demoType": "rpg",
+      "demoButton": "⚔️ RPG Status & Kvestlar"
     },
     {
-      "title": "FAANG LeetCode Arena & Algoritmik Duelchi",
-      "desc": "Kunlik Google va Meta intervyu algoritmlarini tahlil qiluvchi va Big-O murakkabligini tekshiruvchi modul.",
-      "tags": ["DSA", "Big-O", "AI Evaluation"],
-      "link": "#"
+      "id": "leetcode-arena",
+      "category": "algorithms",
+      "title": "FAANG LeetCode Arena & Code Runner",
+      "badge": "Algoritmlar ⚡",
+      "desc": "Kunlik Google va Meta intervyu masalalarini yechuvchi, test keyslarni avtomatik tekshiruvchi va Big-O murakkabligini hisoblovchi interaktiv kod maydoni.",
+      "tags": ["DSA", "Code Execution", "Big-O Analysis", "JavaScript"],
+      "demoType": "code",
+      "demoButton": "▶️ Kodni Ishlatib Ko'rish"
+    },
+    {
+      "id": "dream-calculator",
+      "category": "finance",
+      "title": "Cadillac Escalade Orzu Jamg'arma Simulyatori",
+      "badge": "Moliya & Maqsad 🚗",
+      "desc": "O'quvchilar to'lovlari va daromaddan 30% ajratish qoidasi asosida $120,000 lik Cadillac Escalade maqsadiga erishish vaqtini hisoblovchi interaktiv kalkulyator.",
+      "tags": ["Finance", "Interactive Calculator", "Progress Bar"],
+      "demoType": "calculator",
+      "demoButton": "🚗 Escalade Kalkulyatori"
+    },
+    {
+      "id": "quiz-tester",
+      "category": "teaching",
+      "title": "Tech Bridge & Zamin Tezkor Test Sinovchisi",
+      "badge": "Ta'lim 📚",
+      "desc": "Dasturlash o'quvchilari uchun darhol natija va xatolarni tushuntiruvchi 5 ta interaktiv amaliy dasturlash testi.",
+      "tags": ["Education", "Interactive Quiz", "Feedback System"],
+      "demoType": "quiz",
+      "demoButton": "📝 Testni Boshlash"
     }
   ]
 }

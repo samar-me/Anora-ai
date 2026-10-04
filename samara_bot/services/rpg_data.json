@@ -1,0 +1,63 @@
+{
+  "playerName": "Samar",
+  "level": 1,
+  "currentXp": 90,
+  "totalXp": 90,
+  "stats": {
+    "strength": 10,
+    "intellect": 10,
+    "engineering": 10,
+    "discipline": 19
+  },
+  "questsCompleted": 8,
+  "history": [
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 10,
+      "reason": "1 stakan toza suv ichildi"
+    },
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 10,
+      "reason": "1 stakan toza suv ichildi"
+    },
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 10,
+      "reason": "1 stakan toza suv ichildi"
+    },
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 10,
+      "reason": "1 stakan toza suv ichildi"
+    },
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 10,
+      "reason": "1 stakan toza suv ichildi"
+    },
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 10,
+      "reason": "1 stakan toza suv ichildi"
+    },
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 10,
+      "reason": "1 stakan toza suv ichildi"
+    },
+    {
+      "date": "2026-10-03 22:32",
+      "category": "discipline",
+      "xp": 20,
+      "reason": "2 stakan toza suv ichildi"
+    }
+  ]
+}

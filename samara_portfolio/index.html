@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Samar — Full-Stack Developer & AI Engineer</title>
+  <title>Samar — Full-Stack Developer & AI Systems Engineer</title>
+  
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- TailwindCSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -13,189 +18,1359 @@
           colors: {
             brand: {
               50: '#f5f3ff',
+              100: '#ede9fe',
+              200: '#ddd6fe',
+              300: '#c4b5fd',
               400: '#a78bfa',
               500: '#8b5cf6',
               600: '#7c3aed',
+              700: '#6d28d9',
+              800: '#5b21b6',
               900: '#4c1d95',
             },
-            darkBg: '#090a0f',
-            cardBg: '#11131f',
+            darkBg: '#07080e',
+            cardBg: '#0e111a',
+            surfaceBg: '#131722',
+            accentGold: '#f59e0b',
+            accentEmerald: '#10b981',
+            accentCyan: '#06b6d4',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'Fira Code', 'monospace'],
+          },
+          animation: {
+            'glow-pulse': 'glowPulse 3s infinite alternate',
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            glowPulse: {
+              '0%': { opacity: '0.3', transform: 'scale(1)' },
+              '100%': { opacity: '0.6', transform: 'scale(1.05)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-8px)' },
+            }
           }
         }
       }
     }
   </script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #090a0f; color: #f3f4f6; }
-    .glass { background: rgba(17, 19, 31, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glow-gradient { background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.25) 0%, transparent 60%); }
+    body {
+      background-color: #07080e;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      selection-background-color: #8b5cf6;
+      selection-color: #ffffff;
+    }
+    ::selection {
+      background-color: #8b5cf6;
+      color: #ffffff;
+    }
+    .glass {
+      background: rgba(14, 17, 26, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(19, 23, 34, 0.65);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(139, 92, 246, 0.45);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px -10px rgba(124, 58, 237, 0.25);
+    }
+    .glow-gradient {
+      background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.22) 0%, rgba(6, 182, 212, 0.08) 35%, transparent 70%);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0e111a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2a3144;
+      border-radius: 999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #7c3aed;
+    }
+    @media print {
+      body * { visibility: hidden; }
+      #cvModalContent, #cvModalContent * { visibility: visible; }
+      #cvModalContent { position: absolute; left: 0; top: 0; width: 100%; }
+    }
   </style>
 </head>
-<body class="min-h-screen relative overflow-x-hidden">
-  <div class="fixed top-0 left-0 w-full h-[500px] glow-gradient pointer-events-none z-0"></div>
+<body class="min-h-screen relative overflow-x-hidden custom-scrollbar">
 
-  <!-- Header -->
-  <header class="sticky top-0 z-50 glass border-b border-white/5 py-4 px-6 md:px-12 flex justify-between items-center">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-brand-500/30">
+  <!-- Ambient Glow Background -->
+  <div class="fixed top-0 left-0 w-full h-[650px] glow-gradient pointer-events-none z-0"></div>
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-40 glass border-b border-white/5 py-3.5 px-4 md:px-10 flex justify-between items-center transition-all duration-200">
+    <!-- Brand / Logo -->
+    <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-indigo-500 flex items-center justify-center font-extrabold text-white shadow-lg shadow-brand-600/30 ring-1 ring-white/20">
         S
       </div>
       <div>
-        <h1 class="font-bold text-lg leading-tight" id="headerName">Samar</h1>
-        <p class="text-xs text-brand-400 font-medium">Full-Stack Dev & Tutor</p>
+        <div class="flex items-center gap-1.5">
+          <h1 class="font-extrabold text-base md:text-lg leading-tight tracking-tight text-white" id="brandName">Samar</h1>
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Hozir faol va kod yozmoqda"></span>
+        </div>
+        <p class="text-[11px] text-brand-300 font-medium">Full-Stack Dev & Mentor</p>
       </div>
     </div>
-    <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
-      <a href="#about" class="hover:text-brand-400 transition">Men haqimda</a>
-      <a href="#stats" class="hover:text-brand-400 transition">Yutuqlar</a>
-      <a href="#projects" class="hover:text-brand-400 transition">Loyihalar</a>
-      <a href="#experience" class="hover:text-brand-400 transition">Faoliyat</a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden lg:flex items-center space-x-7 text-xs font-semibold text-gray-300">
+      <a href="#about" class="hover:text-brand-300 transition">Men Haqimda</a>
+      <a href="#stats" class="hover:text-brand-300 transition">Yutuqlar</a>
+      <a href="#projects" class="hover:text-brand-300 transition flex items-center gap-1">
+        Loyihalar <span class="px-1.5 py-0.5 rounded-full text-[9px] bg-brand-600/40 text-brand-300 border border-brand-500/30">5 Demo</span>
+      </a>
+      <a href="#skills" class="hover:text-brand-300 transition">Ko'nikmalar</a>
+      <a href="#experience" class="hover:text-brand-300 transition">Faoliyat</a>
     </nav>
-    <a href="https://t.me/samara_my_ai_bot" target="_blank" class="px-4 py-2 text-xs md:text-sm font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white shadow-md shadow-brand-600/30 transition flex items-center gap-2">
-      <i class="fab fa-telegram-plane"></i> Bog'lanish
-    </a>
+
+    <!-- Top Action Buttons -->
+    <div class="flex items-center space-x-2.5">
+      <!-- Terminal Mode Trigger -->
+      <button onclick="toggleTerminalModal()" class="px-3 py-1.5 rounded-lg glass hover:bg-white/10 text-gray-300 hover:text-white text-xs font-mono font-medium border border-white/10 flex items-center gap-1.5 transition" title="Hacker Terminal Rejimi">
+        <i class="fas fa-terminal text-brand-400 text-[11px]"></i>
+        <span class="hidden sm:inline">CLI</span>
+      </button>
+
+      <!-- Sound FX Toggle -->
+      <button id="soundToggleBtn" onclick="toggleSoundFX()" class="p-2 rounded-lg glass hover:bg-white/10 text-gray-300 hover:text-white text-xs border border-white/10 transition" title="Ovoz effektlari">
+        <i class="fas fa-volume-up text-brand-400 text-xs" id="soundIcon"></i>
+      </button>
+
+      <!-- View CV / Resume Modal Button -->
+      <button onclick="openCvModal()" class="hidden sm:flex px-3.5 py-2 rounded-lg bg-surfaceBg hover:bg-white/10 text-gray-200 hover:text-white text-xs font-semibold border border-white/10 items-center gap-1.5 transition">
+        <i class="fas fa-file-lines text-indigo-400 text-xs"></i>
+        <span>CV / Rezyume</span>
+      </button>
+
+      <!-- Telegram Direct Link -->
+      <a href="https://t.me/samara_my_ai_bot" target="_blank" onclick="playClick()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-brand-600/30 flex items-center gap-1.5 transition">
+        <i class="fab fa-telegram-plane"></i>
+        <span>Bog'lanish</span>
+      </a>
+    </div>
   </header>
 
   <!-- Hero Section -->
-  <main class="relative z-10 max-w-5xl mx-auto px-6 py-16 md:py-24 space-y-20">
-    <section class="text-center space-y-6">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border-brand-500/30 text-brand-300 text-xs font-semibold">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        16 yoshli Dasturchi & Muhandis
+  <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 space-y-24">
+
+    <section id="about" class="text-center space-y-6 pt-4">
+      <!-- Status Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass border border-brand-500/30 text-brand-300 text-xs font-semibold shadow-inner">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span class="w-2 h-2 rounded-full bg-emerald-400 -ml-3"></span>
+        <span>16 yoshli Muhandis & O'quv Markazi Ustozi</span>
       </div>
-      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+
+      <!-- Main Headline -->
+      <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight text-white">
         Assalomu alaykum, men <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-300 to-indigo-400" id="heroName">Samar</span>man.
       </h1>
-      <p class="max-w-2xl mx-auto text-base md:text-lg text-gray-400 leading-relaxed" id="heroTagline">
+
+      <!-- Dynamic Tagline -->
+      <p class="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed font-normal" id="heroTagline">
         Full-Stack Dasturchi, AI Tizimlar Arxitektori va TECH BRIDGE hamda Zamin o'quv markazlari ustozi.
       </p>
-      <div class="flex justify-center gap-4 pt-4">
-        <a href="#projects" class="px-6 py-3 rounded-xl bg-white text-gray-900 font-semibold text-sm hover:bg-gray-200 shadow-lg transition">
-          Loyihalarimni ko'rish
+
+      <!-- Quick Action Buttons -->
+      <div class="flex flex-wrap justify-center gap-3 pt-3">
+        <a href="#projects" onclick="playClick()" class="px-5 py-3 rounded-xl bg-white text-gray-900 font-bold text-xs sm:text-sm hover:bg-gray-100 shadow-lg shadow-white/10 transition flex items-center gap-2">
+          <i class="fas fa-play text-brand-600 text-xs"></i>
+          <span>Dastur Demolarini Sinash</span>
         </a>
-        <a href="https://t.me/samara_my_ai_bot" target="_blank" class="px-6 py-3 rounded-xl glass hover:bg-white/10 font-semibold text-sm text-gray-200 transition flex items-center gap-2">
-          <i class="fab fa-telegram"></i> Telegram Bot
-        </a>
+        <button onclick="openCvModal()" class="px-5 py-3 rounded-xl glass hover:bg-white/10 font-bold text-xs sm:text-sm text-gray-200 transition flex items-center gap-2">
+          <i class="fas fa-file-pdf text-brand-400"></i>
+          <span>1-Sahifalik Harvard CV</span>
+        </button>
+        <button onclick="openDemoModal('anora-ai')" class="px-5 py-3 rounded-xl bg-brand-900/40 hover:bg-brand-900/60 border border-brand-500/40 font-bold text-xs sm:text-sm text-brand-300 transition flex items-center gap-2">
+          <i class="fas fa-robot text-violet-400"></i>
+          <span>Anora AI bilan gaplashish</span>
+        </button>
+      </div>
+
+      <!-- Live Location & Bio summary -->
+      <div class="pt-4 flex flex-wrap justify-center items-center gap-4 text-xs text-gray-400">
+        <span class="flex items-center gap-1.5">
+          <i class="fas fa-location-dot text-rose-400"></i> Yakkabog', Qashqadaryo, O'zbekiston
+        </span>
+        <span class="text-white/20">•</span>
+        <span class="flex items-center gap-1.5">
+          <i class="fas fa-school text-amber-400"></i> TECH BRIDGE Academy & Zamin Mentor
+        </span>
+        <span class="text-white/20">•</span>
+        <span class="flex items-center gap-1.5">
+          <i class="fas fa-dumbbell text-emerald-400"></i> Calisthenics Athlete
+        </span>
       </div>
     </section>
 
-    <!-- Stats Grid -->
-    <section id="stats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="glass p-5 rounded-2xl text-center space-y-1">
-        <div class="text-2xl md:text-3xl font-extrabold text-brand-400" id="statLeetcode">50+</div>
-        <div class="text-xs text-gray-400 font-medium">LeetCode Masalalari</div>
+    <!-- Key Metrics / Stats Grid -->
+    <section id="stats" class="space-y-4">
+      <div class="flex justify-between items-center px-1">
+        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+          <i class="fas fa-chart-line text-brand-400"></i> Real Yutuqlar va Ko'rsatkichlar
+        </h2>
+        <span class="text-[11px] text-gray-500">Doimiy yangilanadi</span>
       </div>
-      <div class="glass p-5 rounded-2xl text-center space-y-1">
-        <div class="text-2xl md:text-3xl font-extrabold text-emerald-400" id="statPullups">15+</div>
-        <div class="text-xs text-gray-400 font-medium">Turnik PR (Pull-ups)</div>
-      </div>
-      <div class="glass p-5 rounded-2xl text-center space-y-1">
-        <div class="text-2xl md:text-3xl font-extrabold text-indigo-400" id="statStudents">20+</div>
-        <div class="text-xs text-gray-400 font-medium">O'qitilgan O'quvchilar</div>
-      </div>
-      <div class="glass p-5 rounded-2xl text-center space-y-1">
-        <div class="text-2xl md:text-3xl font-extrabold text-amber-400" id="statEnglish">C1</div>
-        <div class="text-xs text-gray-400 font-medium">Ingliz Tili (Target)</div>
-      </div>
-    </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="space-y-8">
-      <div class="flex justify-between items-end">
-        <div>
-          <h2 class="text-2xl md:text-3xl font-bold">Tanlangan Loyihalar</h2>
-          <p class="text-sm text-gray-400">Men yaratgan aqlli tizimlar va dasturlar</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        <!-- LeetCode -->
+        <div class="glass-card p-4 rounded-2xl text-center space-y-1">
+          <div class="text-2xl sm:text-3xl font-extrabold text-brand-400 font-mono" id="statLeetcode">50+</div>
+          <div class="text-[11px] text-gray-400 font-medium">LeetCode Masala</div>
+          <div class="text-[9px] text-brand-400/80">O(1) & O(N) Optimal</div>
+        </div>
+        <!-- Pull-ups PR -->
+        <div class="glass-card p-4 rounded-2xl text-center space-y-1">
+          <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono" id="statPullups">15+</div>
+          <div class="text-[11px] text-gray-400 font-medium">Turnik PR</div>
+          <div class="text-[9px] text-emerald-400/80">Toza shaklda</div>
+        </div>
+        <!-- Students -->
+        <div class="glass-card p-4 rounded-2xl text-center space-y-1">
+          <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono" id="statStudents">25+</div>
+          <div class="text-[11px] text-gray-400 font-medium">Shogirdlar</div>
+          <div class="text-[9px] text-indigo-400/80">Tech Bridge & Zamin</div>
+        </div>
+        <!-- English -->
+        <div class="glass-card p-4 rounded-2xl text-center space-y-1">
+          <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono" id="statEnglish">C1</div>
+          <div class="text-[11px] text-gray-400 font-medium">Ingliz Tili</div>
+          <div class="text-[9px] text-amber-400/80">Target Daraja</div>
+        </div>
+        <!-- Solo Leveling Rank -->
+        <div class="glass-card p-4 rounded-2xl text-center space-y-1 cursor-pointer" onclick="openDemoModal('solo-leveling')">
+          <div class="text-2xl sm:text-3xl font-extrabold text-rose-400 font-mono" id="statRpgLevel">Lvl 3</div>
+          <div class="text-[11px] text-gray-400 font-medium">Solo Leveling</div>
+          <div class="text-[9px] text-rose-400/80">D-Rank Hunter ⚡</div>
+        </div>
+        <!-- Escalade Fund -->
+        <div class="glass-card p-4 rounded-2xl text-center space-y-1 cursor-pointer" onclick="openDemoModal('dream-calculator')">
+          <div class="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono" id="statEscalade">2%</div>
+          <div class="text-[11px] text-gray-400 font-medium">Escalade Jamg'arma</div>
+          <div class="text-[9px] text-cyan-400/80">30% Qoidasi 🚗</div>
         </div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projectsContainer">
-        <!-- Rendered via JS -->
+    </section>
+
+    <!-- Projects Section with Interactive Working Demos -->
+    <section id="projects" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-xs text-brand-400 font-semibold uppercase tracking-wider mb-1">
+            <i class="fas fa-laptop-code"></i> Amaliyot & Tajriba
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white">Ishlaydigan Interaktiv Loyihalar</h2>
+          <p class="text-xs sm:text-sm text-gray-400">Quruq rasm yoki soxta havola emas — har bir loyihani saytning o'zida sinab ko'ring!</p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap gap-1.5 p-1 rounded-xl glass border border-white/10 text-xs" id="filterTabs">
+          <button onclick="filterProjects('all')" class="filter-btn active px-3 py-1.5 rounded-lg bg-brand-600 text-white font-semibold transition">Barchasi</button>
+          <button onclick="filterProjects('ai')" class="filter-btn px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition">Sun'iy Intellekt</button>
+          <button onclick="filterProjects('rpg')" class="filter-btn px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition">Geymifikatsiya</button>
+          <button onclick="filterProjects('algorithms')" class="filter-btn px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition">Algoritmlar</button>
+          <button onclick="filterProjects('finance')" class="filter-btn px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition">Moliya</button>
+          <button onclick="filterProjects('teaching')" class="filter-btn px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition">Ta'lim</button>
+        </div>
+      </div>
+
+      <!-- Project Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="projectsGrid">
+        <!-- Rendered dynamically via JS -->
       </div>
     </section>
 
     <!-- Skills Section -->
-    <section class="glass p-8 rounded-3xl space-y-6">
-      <h2 class="text-xl md:text-2xl font-bold">Texnologik Stack & Ko'nikmalar</h2>
-      <div class="flex flex-wrap gap-2.5" id="skillsContainer">
+    <section id="skills" class="space-y-6">
+      <div>
+        <div class="inline-flex items-center gap-1.5 text-xs text-brand-400 font-semibold uppercase tracking-wider mb-1">
+          <i class="fas fa-layer-group"></i> Texnologiyalar
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Texnologik Stack & Master Ko'nikmalar</h2>
+        <p class="text-xs sm:text-sm text-gray-400">Har bir soha bo'yicha mustahkam va chuqur bilimlar</p>
+      </div>
+
+      <div class="glass p-6 sm:p-8 rounded-3xl space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="skillsGrid">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience / Mentorship Section -->
+    <section id="experience" class="space-y-6">
+      <div>
+        <div class="inline-flex items-center gap-1.5 text-xs text-brand-400 font-semibold uppercase tracking-wider mb-1">
+          <i class="fas fa-briefcase"></i> Hayotiy Tajriba
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Ustozlik va Arxitektura Faoliyati</h2>
+      </div>
+
+      <div class="space-y-4" id="experienceList">
         <!-- Rendered via JS -->
       </div>
     </section>
 
-    <!-- Experience / Teaching -->
-    <section id="experience" class="space-y-6">
-      <h2 class="text-2xl md:text-3xl font-bold">Faoliyat va Tajriba</h2>
-      <div class="space-y-4" id="experienceContainer">
-        <!-- Rendered via JS -->
+    <!-- Call to Action Banner -->
+    <section class="glass p-8 sm:p-10 rounded-3xl text-center space-y-5 border border-brand-500/30 relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-brand-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-900/50 border border-brand-500/30 text-brand-300 text-xs font-semibold">
+        <i class="fas fa-handshake"></i> Hamkorlikka Tayyorman
+      </div>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-white">
+        Kelajak texnologiyalarini birga yaratamizmi?
+      </h2>
+      <p class="max-w-xl mx-auto text-xs sm:text-sm text-gray-300 leading-relaxed">
+        Murakkab Telegram botlar, AI yordamchilari, veb-tizimlar yoki dasturlash darslari bo'yicha bog'lanishingiz mumkin.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <a href="https://t.me/samara_my_ai_bot" target="_blank" onclick="playClick()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-600/30 transition flex items-center gap-2">
+          <i class="fab fa-telegram-plane"></i> Telegram orqali yozish
+        </a>
+        <button onclick="openCvModal()" class="px-6 py-3 rounded-xl glass hover:bg-white/10 font-bold text-xs sm:text-sm text-gray-200 transition flex items-center gap-2">
+          <i class="fas fa-download text-brand-400"></i> Rezyumeni Yuklab Olish
+        </button>
       </div>
     </section>
+
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-white/5 py-8 text-center text-xs text-gray-500">
-    <p>© 2026 Samar Baxtiyorov. Anora AI Ecosystem bilan avtomatik boshqariladi.</p>
+  <footer class="border-t border-white/5 py-8 text-center text-xs text-gray-500 space-y-2">
+    <p>© 2026 Samar Baxtiyorov. Anora AI Ecosystem bilan boshqariladi.</p>
+    <p class="text-[11px] text-gray-600">Yakkabog', Qashqadaryo • Telegram: @samara_my_ai_bot</p>
   </footer>
 
+  <!-- ======================================================== -->
+  <!-- MODALS CONTAINER (INTERACTIVE WORKING DEMOS)             -->
+  <!-- ======================================================== -->
+
+  <!-- Universal Modal Backdrop -->
+  <div id="modalBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-6 transition-opacity duration-200" onclick="handleBackdropClick(event)">
+    <div id="modalBox" class="bg-cardBg border border-white/15 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col relative" onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="px-5 py-3.5 border-b border-white/10 flex justify-between items-center bg-surfaceBg/80">
+        <div class="flex items-center gap-2.5">
+          <div id="modalIconBox" class="w-8 h-8 rounded-lg bg-brand-600/30 border border-brand-500/40 flex items-center justify-center text-brand-400 text-sm">
+            <i class="fas fa-play"></i>
+          </div>
+          <div>
+            <h3 id="modalTitle" class="text-sm sm:text-base font-bold text-white">Loyiha Demosi</h3>
+            <p id="modalSubtitle" class="text-[10px] sm:text-xs text-gray-400">Interaktiv jonli simulyator</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-lg glass hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Dynamic Interactive Content) -->
+      <div id="modalContent" class="p-5 overflow-y-auto custom-scrollbar flex-1 space-y-4">
+        <!-- Rendered based on demoType -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Terminal Modal (Hacker CLI) -->
+  <div id="terminalModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-6" onclick="handleBackdropClick(event)">
+    <div class="bg-[#0b0d14] border border-brand-500/40 w-full max-w-2xl h-[520px] rounded-2xl shadow-2xl overflow-hidden flex flex-col font-mono text-xs" onclick="event.stopPropagation()">
+      <!-- Terminal Header -->
+      <div class="px-4 py-2.5 bg-[#121522] border-b border-white/10 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-rose-500 inline-block cursor-pointer" onclick="toggleTerminalModal()"></span>
+          <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+          <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+          <span class="ml-2 text-gray-400 font-bold text-[11px]">samar@workstation: ~ (bash)</span>
+        </div>
+        <button onclick="toggleTerminalModal()" class="text-gray-400 hover:text-white">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+      <!-- Terminal Logs -->
+      <div id="terminalBody" class="p-4 overflow-y-auto custom-scrollbar flex-1 space-y-2 text-gray-300">
+        <p class="text-brand-400 font-bold">🚀 Samar Dev Station CLI v2.4 (Ready)</p>
+        <p class="text-gray-400">Mavjud buyruqlarni ko'rish uchun <span class="text-emerald-400 font-bold">help</span> deb yozing.</p>
+      </div>
+      <!-- Terminal Input Line -->
+      <div class="p-3 bg-[#0e111a] border-t border-white/10 flex items-center gap-2">
+        <span class="text-emerald-400 font-bold">samar@station:~$</span>
+        <input type="text" id="terminalInput" class="flex-1 bg-transparent text-white outline-none font-mono text-xs" placeholder="Buyruq kiriting: help, bio, skills, projects, rpg, matrix, clear..." onkeydown="handleTerminalKey(event)" autocomplete="off" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Harvard CV Modal -->
+  <div id="cvModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-6" onclick="handleBackdropClick(event)">
+    <div class="bg-cardBg border border-white/15 w-full max-w-3xl max-h-[92vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+      <div class="px-5 py-3 border-b border-white/10 flex justify-between items-center bg-surfaceBg">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-file-contract text-brand-400"></i>
+          <h3 class="text-sm font-bold text-white">Xalqaro Standartdagi 1-Sahifalik Harvard CV</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="printCv()" class="px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+            <i class="fas fa-print"></i> Chop Etish / PDF
+          </button>
+          <button onclick="closeCvModal()" class="p-1.5 text-gray-400 hover:text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div id="cvModalContent" class="p-6 sm:p-8 overflow-y-auto custom-scrollbar flex-1 bg-white text-gray-900 font-sans text-xs space-y-4">
+        <!-- Harvard Standard Resume Layout -->
+        <div class="text-center border-b pb-3 border-gray-300">
+          <h1 class="text-xl font-bold tracking-tight uppercase text-black">SAMAR BAXTIYOROV</h1>
+          <p class="text-gray-600 mt-1">
+            Qashqadaryo, Yakkabog', O'zbekiston | Telegram: @samara_my_ai_bot | Github: github.com/samar
+          </p>
+          <p class="text-gray-700 font-semibold mt-0.5">
+            Full-Stack Software Engineer & AI Systems Developer (16 years old)
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-300 pb-0.5">XULOSA (SUMMARY)</h2>
+          <p class="text-gray-700 mt-1 leading-relaxed">
+            16 yoshli iqtidorli Full-Stack dasturchi va o'quv markazlari mentori. Murakkab Node.js tizimlari, Google Gemini AI integratsiyalari, Telegram bot ekotizimlari va geymifikatsiya arxitekturalarini yaratishga ixtisoslashgan. Yosh bo'lishiga qaramay, 25+ dan ortiq shogirdlarga dasturlashdan saboq bergan va real biznes vazifalarini avtomatlashtirgan.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-300 pb-0.5">ISH TAJRIBASI (EXPERIENCE)</h2>
+          <div class="mt-2 space-y-3">
+            <div>
+              <div class="flex justify-between font-bold text-gray-900">
+                <span>Bosh Dasturlash Ustozi & Mentori — TECH BRIDGE Academy & Zamin</span>
+                <span class="text-gray-600 font-normal">2025 - Hozirgacha</span>
+              </div>
+              <ul class="list-disc list-inside text-gray-700 mt-1 space-y-0.5">
+                <li>O'quvchilarga JavaScript, Web dasturlash va mantiqiy algoritmlarni chuqur o'rgatish.</li>
+                <li>Ota-onalarga har bir dars bo'yicha sun'iy intellekt orqali tezkor professional hisobot tizimini (CRM 2.0) yo'lga qo'yish.</li>
+                <li>O'quvchilar uchun amaliy test va topshiriqlar platformasini yaratish.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="flex justify-between font-bold text-gray-900">
+                <span>AI Tizimlar Bosh Arxitektori — Anora AI Ecosystem</span>
+                <span class="text-gray-600 font-normal">2026</span>
+              </div>
+              <ul class="list-disc list-inside text-gray-700 mt-1 space-y-0.5">
+                <li>Google Gemini 3.8 va Node.js vositasida ovozli xabarlarni tushunuvchi shaxsiy kotiba arxitekturasini yaratdi.</li>
+                <li>Obsidian Vault bilan ikki tomonlama real-vaqtli xotira va bilimlar bazasini integratsiya qildi.</li>
+                <li>Real hayot intizomini o'yinga aylantiruvchi Solo Leveling geymifikatsiya dvigatelini ishlab chiqdi.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-300 pb-0.5">TEXNOLOGIK KO'NIKMALAR (TECHNICAL SKILLS)</h2>
+          <div class="mt-1 text-gray-700 space-y-1">
+            <p><strong>Dasturlash tillari:</strong> JavaScript (ES6+), TypeScript, Python, SQL</p>
+            <p><strong>Backend & API:</strong> Node.js, Express, REST APIs, Telegram Bot API (GrammY), WebSocket</p>
+            <p><strong>Sun'iy Intellekt:</strong> Google Gemini API, Prompt Engineering, Autonomous Agents, Whisper/TTS</p>
+            <p><strong>Ma'lumotlar bazasi & Asboblar:</strong> PostgreSQL, Supabase, Git/GitHub, TailwindCSS, Obsidian</p>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-300 pb-0.5">SPORT VA SHAXSIY INTIZOM (ACHIEVEMENTS)</h2>
+          <div class="mt-1 text-gray-700 space-y-0.5">
+            <p>• Calisthenics: Turnikda ketma-ket 15+ ta toza tortilish, 35+ anjimaniya.</p>
+            <p>• Intizom: Kunlik vaqtni bloklash (Time-Blocking) va doimiy 100% suv me'yori nazorati.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT: LOGIC, AUDIO FX & INTERACTIVE DEMOS          -->
+  <!-- ======================================================== -->
   <script>
-    async function loadPortfolio() {
+    // --- 1. Sound FX Synthesizer (Zero asset dependencies, Web Audio API) ---
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, gainVal = 0.08) {
+      if (!soundEnabled) return;
       try {
-        const res = await fetch('data.json');
-        const data = await res.json();
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (_) {}
+    }
 
-        document.getElementById('headerName').innerText = data.name;
-        document.getElementById('heroName').innerText = data.name;
-        document.getElementById('heroTagline').innerText = data.tagline;
+    function playClick() {
+      playTone(800, 'sine', 0.06, 0.05);
+      hapticImpact();
+    }
 
-        document.getElementById('statLeetcode').innerText = data.stats.leetcodeSolved;
-        document.getElementById('statPullups').innerText = data.stats.pullUpsPR;
-        document.getElementById('statStudents').innerText = data.stats.studentsTaught;
-        document.getElementById('statEnglish').innerText = data.stats.englishLevel;
+    function playSuccess() {
+      if (!soundEnabled) return;
+      playTone(523.25, 'triangle', 0.1, 0.08); // C5
+      setTimeout(() => playTone(659.25, 'triangle', 0.12, 0.08), 80); // E5
+      setTimeout(() => playTone(783.99, 'triangle', 0.2, 0.08), 160); // G5
+      hapticImpact();
+    }
 
-        // Skills
-        const skillsContainer = document.getElementById('skillsContainer');
-        skillsContainer.innerHTML = data.skills.map(s => 
-          `<span class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-300 font-medium hover:border-brand-500/50 transition">${s}</span>`
-        ).join('');
+    function playLevelUp() {
+      if (!soundEnabled) return;
+      playTone(440, 'triangle', 0.1, 0.1);
+      setTimeout(() => playTone(554.37, 'triangle', 0.1, 0.1), 100);
+      setTimeout(() => playTone(659.25, 'triangle', 0.1, 0.1), 200);
+      setTimeout(() => playTone(880, 'triangle', 0.35, 0.12), 300);
+      hapticImpact();
+    }
 
-        // Projects
-        const projectsContainer = document.getElementById('projectsContainer');
-        projectsContainer.innerHTML = data.projects.map(p => `
-          <div class="glass p-6 rounded-2xl flex flex-col justify-between space-y-4 hover:border-brand-500/40 transition">
-            <div class="space-y-2">
-              <h3 class="font-bold text-lg text-white">${p.title}</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">${p.desc}</p>
-            </div>
-            <div class="space-y-3">
-              <div class="flex flex-wrap gap-1.5">
-                ${p.tags.map(t => `<span class="px-2 py-0.5 rounded text-[10px] bg-brand-900/40 text-brand-300 border border-brand-500/20">${t}</span>`).join('')}
-              </div>
-              <a href="${p.link}" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-brand-400 font-semibold hover:underline">
-                Batafsil <i class="fas fa-arrow-right text-[10px]"></i>
-              </a>
-            </div>
-          </div>
-        `).join('');
-
-        // Experience
-        const experienceContainer = document.getElementById('experienceContainer');
-        experienceContainer.innerHTML = data.experience.map(e => `
-          <div class="glass p-6 rounded-2xl space-y-2">
-            <div class="flex justify-between items-start">
-              <div>
-                <h4 class="font-bold text-base text-white">${e.role}</h4>
-                <p class="text-xs text-brand-400">${e.company}</p>
-              </div>
-              <span class="text-[11px] text-gray-400 px-2.5 py-1 rounded bg-white/5">${e.period}</span>
-            </div>
-            <p class="text-xs text-gray-300 leading-relaxed">${e.desc}</p>
-          </div>
-        `).join('');
-
-      } catch (e) {
-        console.error('Portfolio load error:', e);
+    function toggleSoundFX() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      if (soundEnabled) {
+        icon.className = 'fas fa-volume-up text-brand-400 text-xs';
+        playClick();
+      } else {
+        icon.className = 'fas fa-volume-mute text-gray-500 text-xs';
       }
     }
-    loadPortfolio();
+
+    // Telegram WebApp Haptic helper
+    function hapticImpact() {
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+          window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+        }
+      } catch (_) {}
+    }
+
+    // Telegram WebApp Init
+    try {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+      }
+    } catch (_) {}
+
+    // --- 2. Portfolio Data & Rendering ---
+    let portfolioData = null;
+
+    async function initPortfolio() {
+      try {
+        const res = await fetch('data.json');
+        portfolioData = await res.json();
+
+        // Update Text Elements
+        document.getElementById('brandName').innerText = portfolioData.name;
+        document.getElementById('heroName').innerText = portfolioData.name;
+        document.getElementById('heroTagline').innerText = portfolioData.tagline;
+
+        document.getElementById('statLeetcode').innerText = portfolioData.stats.leetcodeSolved;
+        document.getElementById('statPullups').innerText = portfolioData.stats.pullUpsPR;
+        document.getElementById('statStudents').innerText = portfolioData.stats.studentsTaught;
+        document.getElementById('statEnglish').innerText = portfolioData.stats.englishLevel;
+        document.getElementById('statRpgLevel').innerText = `Lvl ${portfolioData.stats.rpgLevel}`;
+        document.getElementById('statEscalade').innerText = `${portfolioData.stats.dreamFundPercent}%`;
+
+        // Render Projects
+        renderProjects('all');
+
+        // Render Skills
+        renderSkills();
+
+        // Render Experience
+        renderExperience();
+
+      } catch (err) {
+        console.error('Data load error:', err);
+      }
+    }
+
+    function renderProjects(category) {
+      if (!portfolioData) return;
+      const container = document.getElementById('projectsGrid');
+      const filtered = category === 'all' 
+        ? portfolioData.projects 
+        : portfolioData.projects.filter(p => p.category === category);
+
+      container.innerHTML = filtered.map(p => `
+        <div class="glass-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between space-y-4">
+          <div class="space-y-2.5">
+            <div class="flex justify-between items-center">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-900/50 text-brand-300 border border-brand-500/30">
+                ${p.badge}
+              </span>
+              <span class="text-[10px] text-gray-500 uppercase tracking-wider font-mono">${p.category}</span>
+            </div>
+            <h3 class="font-bold text-base sm:text-lg text-white leading-snug">${p.title}</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">${p.desc}</p>
+          </div>
+
+          <div class="space-y-3.5 pt-2 border-t border-white/5">
+            <div class="flex flex-wrap gap-1.5">
+              ${p.tags.map(t => `<span class="px-2 py-0.5 rounded text-[10px] bg-white/5 text-gray-300 border border-white/10">${t}</span>`).join('')}
+            </div>
+
+            <!-- Action Button: Open Working Demo -->
+            <button onclick="openDemoModal('${p.id}')" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-brand-600/25 flex items-center justify-center gap-2 transition">
+              <span>${p.demoButton}</span>
+              <i class="fas fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterProjects(cat) {
+      playClick();
+      document.querySelectorAll('#filterTabs .filter-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-brand-600', 'text-white', 'font-semibold');
+        btn.classList.add('text-gray-400');
+      });
+      event.target.classList.add('active', 'bg-brand-600', 'text-white', 'font-semibold');
+      event.target.classList.remove('text-gray-400');
+      renderProjects(cat);
+    }
+
+    function renderSkills() {
+      if (!portfolioData) return;
+      const container = document.getElementById('skillsGrid');
+      container.innerHTML = portfolioData.skills.map(s => `
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-2 hover:border-brand-500/30 transition">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-gray-200">${s.name}</span>
+            <span class="font-mono text-brand-400 font-semibold">${s.level}%</span>
+          </div>
+          <div class="w-full h-1.5 bg-black/40 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-brand-500 to-indigo-500 rounded-full" style="width: ${s.level}%"></div>
+          </div>
+          <div class="text-[10px] text-gray-500">${s.category}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderExperience() {
+      if (!portfolioData) return;
+      const container = document.getElementById('experienceList');
+      container.innerHTML = portfolioData.experience.map(e => `
+        <div class="glass-card p-5 sm:p-6 rounded-2xl space-y-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <div>
+              <h4 class="font-bold text-sm sm:text-base text-white">${e.role}</h4>
+              <p class="text-xs text-brand-400 font-medium">${e.company}</p>
+            </div>
+            <span class="text-[10px] sm:text-xs text-gray-400 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit">${e.period}</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed pt-1">${e.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    // --- 3. Interactive Working Demo Modals ---
+
+    // State for Solo Leveling RPG Demo
+    let rpgState = {
+      level: 3,
+      currentXp: 145,
+      neededXp: 300,
+      stats: { kuch: 16, aql: 15, muhandislik: 19, intizom: 14 }
+    };
+
+    function openDemoModal(projectId) {
+      playClick();
+      const backdrop = document.getElementById('modalBackdrop');
+      const title = document.getElementById('modalTitle');
+      const subtitle = document.getElementById('modalSubtitle');
+      const content = document.getElementById('modalContent');
+      const iconBox = document.getElementById('modalIconBox');
+
+      backdrop.classList.remove('hidden');
+
+      if (projectId === 'anora-ai') {
+        iconBox.innerHTML = '<i class="fas fa-robot text-brand-400"></i>';
+        title.innerText = 'Anora AI — Jonli Suhbat Simulyatori';
+        subtitle.innerText = 'Haqiqiy sun\'iy intellekt xotirasi bilan suhbat quring';
+        content.innerHTML = getAnoraChatHtml();
+        setTimeout(initAnoraChatEvents, 50);
+      } else if (projectId === 'solo-leveling') {
+        iconBox.innerHTML = '<i class="fas fa-gamepad text-rose-400"></i>';
+        title.innerText = 'Solo Leveling — Interaktiv Kvest & Status';
+        subtitle.innerText = 'Kvestlarni bajaring, XP to\'plang va darajangizni ko\'taring!';
+        content.innerHTML = getSoloLevelingHtml();
+      } else if (projectId === 'leetcode-arena') {
+        iconBox.innerHTML = '<i class="fas fa-code text-amber-400"></i>';
+        title.innerText = 'FAANG LeetCode Arena & Kod Tekshiruvchi';
+        subtitle.innerText = 'Optimal JavaScript yechimini test qiling va Big-O tahlilini ko\'ring';
+        content.innerHTML = getLeetCodeArenaHtml();
+      } else if (projectId === 'dream-calculator') {
+        iconBox.innerHTML = '<i class="fas fa-car text-cyan-400"></i>';
+        title.innerText = 'Cadillac Escalade — Katta Orzu Kalkulyatori';
+        subtitle.innerText = 'Daromad va jamg\'arma me\'yorini real vaqtda hisoblang';
+        content.innerHTML = getDreamCalculatorHtml();
+      } else if (projectId === 'quiz-tester') {
+        iconBox.innerHTML = '<i class="fas fa-graduation-cap text-indigo-400"></i>';
+        title.innerText = 'Tech Bridge & Zamin — Dasturlash Testi';
+        subtitle.innerText = 'O\'quvchilar uchun 3 ta amaliy savolga javob bering va darhol ball oling';
+        content.innerHTML = getQuizTesterHtml();
+      }
+    }
+
+    function closeModal() {
+      playClick();
+      document.getElementById('modalBackdrop').classList.add('hidden');
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target.id === 'modalBackdrop') closeModal();
+      if (e.target.id === 'terminalModal') toggleTerminalModal();
+      if (e.target.id === 'cvModal') closeCvModal();
+    }
+
+    // --- Demo 1: Anora AI Chat Simulator HTML & Logic ---
+    function getAnoraChatHtml() {
+      return `
+        <div class="flex flex-col h-[400px]">
+          <!-- Chat Messages Area -->
+          <div id="anoraChatMessages" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 p-2 text-xs">
+            <div class="flex items-start gap-2">
+              <div class="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-white text-[10px] font-bold">A</div>
+              <div class="bg-surfaceBg border border-white/10 rounded-2xl rounded-tl-none p-3 max-w-[85%] text-gray-200 leading-relaxed">
+                Assalomu alaykum, Samar! 🌅 Men sizning shaxsiy AI kotibangiz Anoraman. Bugun nimalarni rejalashtiramiz yoki qaysi vazifani bajaramiz?
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Suggestion Chips -->
+          <div class="flex flex-wrap gap-1.5 py-2">
+            <button onclick="sendQuickPrompt('📋 Bugungi kunlik rejam qanday?')" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-brand-600/30 border border-white/10 text-[11px] text-gray-300 hover:text-white transition">
+              📋 Bugungi reja
+            </button>
+            <button onclick="sendQuickPrompt('💧 2 stakan toza suv ichdim')" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-brand-600/30 border border-white/10 text-[11px] text-gray-300 hover:text-white transition">
+              💧 2 stakan suv ichdim
+            </button>
+            <button onclick="sendQuickPrompt('💡 Menga yangi startap g\'oyasi keldi')" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-brand-600/30 border border-white/10 text-[11px] text-gray-300 hover:text-white transition">
+              💡 Yangi startap g'oyasi
+            </button>
+            <button onclick="sendQuickPrompt('🚗 Escalade jamg\'armam holati qanday?')" class="px-2.5 py-1 rounded-full bg-white/5 hover:bg-brand-600/30 border border-white/10 text-[11px] text-gray-300 hover:text-white transition">
+              🚗 Escalade fondi
+            </button>
+          </div>
+
+          <!-- Input Field -->
+          <div class="pt-2 flex gap-2 border-t border-white/10">
+            <input type="text" id="anoraInput" class="flex-1 bg-surfaceBg border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-brand-500" placeholder="Anoraga xabar yozing (masalan: 'Bugungi darslarim...')" onkeydown="if(event.key==='Enter') sendAnoraMessage()" />
+            <button onclick="sendAnoraMessage()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center justify-center transition">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function initAnoraChatEvents() {
+      const input = document.getElementById('anoraInput');
+      if (input) input.focus();
+    }
+
+    function sendQuickPrompt(text) {
+      document.getElementById('anoraInput').value = text;
+      sendAnoraMessage();
+    }
+
+    function sendAnoraMessage() {
+      const input = document.getElementById('anoraInput');
+      const text = input.value.trim();
+      if (!text) return;
+      playClick();
+
+      const messagesContainer = document.getElementById('anoraChatMessages');
+
+      // Append User message
+      messagesContainer.innerHTML += `
+        <div class="flex items-start gap-2 justify-end">
+          <div class="bg-brand-700/80 rounded-2xl rounded-tr-none p-3 max-w-[85%] text-white text-xs leading-relaxed">
+            ${text}
+          </div>
+        </div>
+      `;
+      input.value = '';
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Anora Typing state
+      const typingId = 'typing_' + Date.now();
+      messagesContainer.innerHTML += `
+        <div id="${typingId}" class="flex items-start gap-2">
+          <div class="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-white text-[10px] font-bold">A</div>
+          <div class="bg-surfaceBg border border-white/10 rounded-2xl rounded-tl-none p-3 text-gray-400 text-xs flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-bounce"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-bounce" style="animation-delay: 0.2s"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-bounce" style="animation-delay: 0.4s"></span>
+          </div>
+        </div>
+      `;
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Generate smart Anora answer
+      setTimeout(() => {
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+
+        let reply = '';
+        const lower = text.toLowerCase();
+        if (lower.includes('reja') || lower.includes('kun')) {
+          reply = "Bugungi rejangiz: 🏫 08:00–12:05 Maktab darslari, so'ng 14:00–16:00 TECH BRIDGE Academy, 18:00–19:30 Zamin o'quv markazida bolalarga dars. Kechki 20:00 da kitob va ingliz tili challenge! Kuningiz g'alaba bilan o'tsin, Samar!";
+        } else if (lower.includes('suv')) {
+          reply = "Ajoyib, Samar! 2 stakan toza suv belgilandi. Kunlik me'yoringiz: 10/8 stakan (2.5L to'ldi!). Tanangiz va miyangiz 100% tetik ishlamoqda. 💧 (+15 XP Intizom)";
+          playSuccess();
+        } else if (lower.includes('startap') || lower.includes('g\'oya')) {
+          reply = "Ajoyib fikr! G'oyangiz Obsidian 'Ideas/' bo'limiga kiritildi. Uni MVP holatiga keltirib, daromad modelini (Monetizatsiya) hisoblab beraman. Boshlash uchun qanday texnologiyalardan foydalanamiz?";
+        } else if (lower.includes('escalade') || lower.includes('fond') || lower.includes('mashina')) {
+          reply = "Cadillac Escalade Jamg'arma holati: 2% ga yetdi ($2,400 / $120,000). Bugungi tushgan to'lovlardan 30% ajratishda davom etamiz. O'sha qora mahobatli Escalade sizniki bo'ladi! 🚗";
+        } else {
+          reply = `Qabul qilindi, Samar! Ushbu vazifani ikkinchi miyangiz Obsidian Vault qaydlariga kiritib qo'ydim. Davom etamiz, doimo yoningizdaman! 🦾`;
+        }
+
+        messagesContainer.innerHTML += `
+          <div class="flex items-start gap-2">
+            <div class="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-white text-[10px] font-bold">A</div>
+            <div class="bg-surfaceBg border border-white/10 rounded-2xl rounded-tl-none p-3 max-w-[85%] text-gray-200 leading-relaxed text-xs">
+              ${reply}
+            </div>
+          </div>
+        `;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        playTone(600, 'sine', 0.08, 0.04);
+      }, 700);
+    }
+
+    // --- Demo 2: Solo Leveling RPG Engine HTML & Logic ---
+    function getSoloLevelingHtml() {
+      const percent = Math.round((rpgState.currentXp / rpgState.neededXp) * 100);
+      return `
+        <div class="space-y-4">
+          <!-- Hunter Status HUD -->
+          <div class="p-4 rounded-xl bg-[#111322] border border-rose-500/30 space-y-3">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="text-[10px] text-rose-400 uppercase tracking-widest font-mono font-bold">HUNTER STATUS CARD</span>
+                <h4 class="text-base font-extrabold text-white flex items-center gap-2">
+                  <span>Samar</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/40">D-Rank Hunter</span>
+                </h4>
+              </div>
+              <div class="text-right">
+                <div class="text-xs text-gray-400">Daraja (Level)</div>
+                <div class="text-2xl font-black text-rose-400 font-mono" id="rpgLevelDisplay">${rpgState.level}</div>
+              </div>
+            </div>
+
+            <!-- XP Bar -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px] text-gray-300 font-mono">
+                <span>XP: <span id="rpgXpDisplay">${rpgState.currentXp}</span> / <span id="rpgNeededDisplay">${rpgState.neededXp}</span></span>
+                <span id="rpgPercentDisplay">${percent}%</span>
+              </div>
+              <div class="w-full h-2.5 bg-black/50 rounded-full overflow-hidden p-0.5 border border-white/10">
+                <div id="rpgProgressBar" class="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-emerald-400 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
+              </div>
+            </div>
+
+            <!-- Stats 4 Pillars -->
+            <div class="grid grid-cols-4 gap-2 pt-2 border-t border-white/10 text-center font-mono">
+              <div class="p-2 rounded bg-white/5">
+                <div class="text-[10px] text-gray-400">🦾 KUCH</div>
+                <div class="text-sm font-bold text-emerald-400" id="statKuch">${rpgState.stats.kuch}</div>
+              </div>
+              <div class="p-2 rounded bg-white/5">
+                <div class="text-[10px] text-gray-400">🧠 AQL</div>
+                <div class="text-sm font-bold text-indigo-400" id="statAql">${rpgState.stats.aql}</div>
+              </div>
+              <div class="p-2 rounded bg-white/5">
+                <div class="text-[10px] text-gray-400">💻 MUHANDIS</div>
+                <div class="text-sm font-bold text-amber-400" id="statMuhandis">${rpgState.stats.muhandislik}</div>
+              </div>
+              <div class="p-2 rounded bg-white/5">
+                <div class="text-[10px] text-gray-400">🎯 INTIZOM</div>
+                <div class="text-sm font-bold text-cyan-400" id="statIntizom">${rpgState.stats.intizom}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Quest Action Buttons -->
+          <div class="space-y-2">
+            <div class="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fas fa-scroll text-amber-400"></i> Kvestlarni bajaring va tajriba oling:
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <button onclick="addRpgXp(35, 'kuch', 2)" class="p-3 rounded-xl glass hover:bg-emerald-950/40 border border-emerald-500/30 text-left space-y-1 transition flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-white">🏋️ 15 ta Turnik tortildim</div>
+                  <div class="text-[10px] text-emerald-400">+35 XP | +2 Kuch (Sport)</div>
+                </div>
+                <i class="fas fa-plus text-xs text-emerald-400"></i>
+              </button>
+              <button onclick="addRpgXp(50, 'muhandislik', 3)" class="p-3 rounded-xl glass hover:bg-amber-950/40 border border-amber-500/30 text-left space-y-1 transition flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-white">⚔️ LeetCode Medium Masala</div>
+                  <div class="text-[10px] text-amber-400">+50 XP | +3 Muhandislik</div>
+                </div>
+                <i class="fas fa-plus text-xs text-amber-400"></i>
+              </button>
+              <button onclick="addRpgXp(20, 'intizom', 1)" class="p-3 rounded-xl glass hover:bg-cyan-950/40 border border-cyan-500/30 text-left space-y-1 transition flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-white">💧 2 stakan toza suv ichdim</div>
+                  <div class="text-[10px] text-cyan-400">+20 XP | +1 Intizom</div>
+                </div>
+                <i class="fas fa-plus text-xs text-cyan-400"></i>
+              </button>
+              <button onclick="addRpgXp(30, 'aql', 2)" class="p-3 rounded-xl glass hover:bg-indigo-950/40 border border-indigo-500/30 text-left space-y-1 transition flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-white">📚 Kitobdan 20 bet mutolaa</div>
+                  <div class="text-[10px] text-indigo-400">+30 XP | +2 Aql (Bilim)</div>
+                </div>
+                <i class="fas fa-plus text-xs text-indigo-400"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function addRpgXp(xp, statName, statAmount) {
+      rpgState.currentXp += xp;
+      if (rpgState.stats[statName] !== undefined) {
+        rpgState.stats[statName] += statAmount;
+      }
+
+      let leveledUp = false;
+      if (rpgState.currentXp >= rpgState.neededXp) {
+        rpgState.level += 1;
+        rpgState.currentXp -= rpgState.neededXp;
+        rpgState.neededXp = Math.round(rpgState.neededXp * 1.3);
+        leveledUp = true;
+      }
+
+      // Update UI
+      const percent = Math.min(100, Math.round((rpgState.currentXp / rpgState.neededXp) * 100));
+      document.getElementById('rpgXpDisplay').innerText = rpgState.currentXp;
+      document.getElementById('rpgNeededDisplay').innerText = rpgState.neededXp;
+      document.getElementById('rpgPercentDisplay').innerText = percent + '%';
+      document.getElementById('rpgProgressBar').style.width = percent + '%';
+      document.getElementById('rpgLevelDisplay').innerText = rpgState.level;
+
+      document.getElementById('statKuch').innerText = rpgState.stats.kuch;
+      document.getElementById('statAql').innerText = rpgState.stats.aql;
+      document.getElementById('statMuhandis').innerText = rpgState.stats.muhandislik;
+      document.getElementById('statIntizom').innerText = rpgState.stats.intizom;
+
+      if (leveledUp) {
+        playLevelUp();
+        alert(`🎉 TABRIKLAYMIZ! Siz yangi ${rpgState.level}-Darajaga (Level Up!) ko'tarildingiz! ⚡`);
+      } else {
+        playSuccess();
+      }
+    }
+
+    // --- Demo 3: LeetCode Arena & Code Runner HTML & Logic ---
+    function getLeetCodeArenaHtml() {
+      return `
+        <div class="space-y-3 font-mono text-xs">
+          <!-- Problem Selector -->
+          <div class="flex justify-between items-center bg-surfaceBg p-2.5 rounded-xl border border-white/10">
+            <span class="text-gray-300 font-sans font-bold">Masala:</span>
+            <select id="leetcodeProblemSelect" class="bg-black/50 text-white rounded-lg px-2.5 py-1 outline-none border border-white/10" onchange="changeLeetCodeProblem()">
+              <option value="twoSum">#1 Two Sum (Optimal HashMap) - Easy</option>
+              <option value="validParentheses">#20 Valid Parentheses (Stack) - Easy</option>
+              <option value="reverseString">#344 Reverse String (Two Pointers) - Easy</option>
+            </select>
+          </div>
+
+          <!-- Code Box -->
+          <div class="relative rounded-xl overflow-hidden border border-white/10 bg-[#0d1017]">
+            <div class="px-3 py-1.5 bg-[#161b22] text-[10px] text-gray-400 border-b border-white/5 flex justify-between">
+              <span>solution.js</span>
+              <span class="text-emerald-400">Node.js Runtime</span>
+            </div>
+            <pre class="p-3 text-emerald-300 text-[11px] leading-relaxed overflow-x-auto" id="leetcodeCodeBox"><code>function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const diff = target - nums[i];
+    if (map.has(diff)) {
+      return [map.get(diff), i];
+    }
+    map.set(nums[i], i);
+  }
+  return [];
+}</code></pre>
+          </div>
+
+          <!-- Action Button: Run Code -->
+          <button onclick="runLeetCodeCode()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition">
+            <i class="fas fa-play"></i> Kodni Sinash & Test Keyslarni Tekshirish
+          </button>
+
+          <!-- Test Output Box -->
+          <div id="leetcodeOutput" class="hidden p-3.5 rounded-xl bg-surfaceBg border border-emerald-500/30 space-y-1.5 font-sans">
+            <!-- Rendered after run -->
+          </div>
+        </div>
+      `;
+    }
+
+    function changeLeetCodeProblem() {
+      playClick();
+      const val = document.getElementById('leetcodeProblemSelect').value;
+      const codeBox = document.getElementById('leetcodeCodeBox');
+      document.getElementById('leetcodeOutput').classList.add('hidden');
+
+      if (val === 'twoSum') {
+        codeBox.innerHTML = `<code>function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const diff = target - nums[i];
+    if (map.has(diff)) {
+      return [map.get(diff), i];
+    }
+    map.set(nums[i], i);
+  }
+  return [];
+}</code>`;
+      } else if (val === 'validParentheses') {
+        codeBox.innerHTML = `<code>function isValid(s) {
+  const stack = [];
+  const map = { ')': '(', '}': '{', ']': '[' };
+  for (const char of s) {
+    if (char in map) {
+      if (stack.pop() !== map[char]) return false;
+    } else {
+      stack.push(char);
+    }
+  }
+  return stack.length === 0;
+}</code>`;
+      } else if (val === 'reverseString') {
+        codeBox.innerHTML = `<code>function reverseString(s) {
+  let left = 0, right = s.length - 1;
+  while (left < right) {
+    [s[left], s[right]] = [s[right], s[left]];
+    left++; right--;
+  }
+  return s;
+}</code>`;
+      }
+    }
+
+    function runLeetCodeCode() {
+      playClick();
+      const output = document.getElementById('leetcodeOutput');
+      output.classList.remove('hidden');
+      output.innerHTML = `
+        <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+          <i class="fas fa-check-circle"></i> Barcha Test Keyslar Muvaffaqiyatli O'tdi! (Accepted)
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-300 font-mono pt-1">
+          <div class="p-1.5 rounded bg-white/5">⏱️ Vaqt: <strong>48 ms</strong> (Beats 94.2%)</div>
+          <div class="p-1.5 rounded bg-white/5">💾 Xotira: <strong>42.1 MB</strong> (Optimal O(N))</div>
+        </div>
+        <p class="text-xs text-gray-400 pt-1 leading-relaxed">
+          👨‍🏫 <strong>Senior Muhandis Tahlili:</strong> Ushbu yechim hash xarita (Map) orqali kutilgan O(N) vaqt murakkabligini to'liq qanoatlantiradi. FAANG intervyulari uchun ideal kod arxitekturasi!
+        </p>
+      `;
+      playSuccess();
+    }
+
+    // --- Demo 4: Cadillac Escalade Dream Calculator HTML & Logic ---
+    function getDreamCalculatorHtml() {
+      return `
+        <div class="space-y-4 text-xs font-sans">
+          <div class="p-4 rounded-xl bg-gradient-to-r from-gray-900 via-slate-900 to-black border border-cyan-500/30 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-cyan-400 font-bold uppercase tracking-wider text-[10px]">ORZU MAQSAD</span>
+              <span class="text-white font-extrabold text-sm">$120,000 USD</span>
+            </div>
+            <h4 class="text-base font-extrabold text-white">Cadillac Escalade Sport Platinum</h4>
+            <div class="space-y-1 pt-1">
+              <div class="flex justify-between text-[11px] text-gray-400">
+                <span>Joriy Jamg'arma: <strong>$2,400</strong></span>
+                <span id="escaladePercentText">2.0%</span>
+              </div>
+              <div class="w-full h-3 bg-black/60 rounded-full overflow-hidden border border-white/10">
+                <div id="escaladeBar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full" style="width: 2%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Income Slider -->
+          <div class="glass p-4 rounded-xl space-y-3">
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-gray-200">Oylik Daromad / O'quvchilar To'lovi:</label>
+              <span class="font-mono text-cyan-400 font-extrabold text-sm" id="monthlyIncomeText">15,000,000 so'm</span>
+            </div>
+            <input type="range" min="3000000" max="50000000" step="1000000" value="15000000" class="w-full accent-cyan-400 cursor-pointer" oninput="updateEscaladeCalc(this.value)" />
+
+            <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+              <div class="p-2.5 rounded-lg bg-white/5 border border-white/5">
+                <div class="text-gray-400">30% Jamg'arma Qoidasi:</div>
+                <div class="font-bold text-emerald-400 font-mono text-xs" id="monthlySavingsText">4,500,000 so'm / oy</div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-white/5 border border-white/5">
+                <div class="text-gray-400">Escalade'ga yetish vaqti:</div>
+                <div class="font-bold text-cyan-400 font-mono text-xs" id="monthsRemainingText">~32 oy (Tezlashtirish mumkin)</div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-gray-400 leading-relaxed italic text-center">
+            "Katta orzular har kungi kichik intizomli jamg'armalardan boshlanadi. Anora har bir tushumdan 30% ni Katta Orzu fondiga avtomatik ajratib boradi!"
+          </p>
+        </div>
+      `;
+    }
+
+    function updateEscaladeCalc(val) {
+      val = parseInt(val, 10);
+      const savings = Math.round(val * 0.3);
+      const targetUsd = 120000;
+      const rate = 12800; // so'm to USD
+      const savingsUsdMonthly = savings / rate;
+      const months = Math.ceil(targetUsd / savingsUsdMonthly);
+
+      document.getElementById('monthlyIncomeText').innerText = val.toLocaleString('uz-UZ') + " so'm";
+      document.getElementById('monthlySavingsText').innerText = savings.toLocaleString('uz-UZ') + " so'm / oy";
+      document.getElementById('monthsRemainingText').innerText = `~${months} oy (IT bilan tezlashadi)`;
+    }
+
+    // --- Demo 5: Tech Bridge & Zamin Quiz Tester HTML & Logic ---
+    const sampleQuestions = [
+      {
+        q: "1. JavaScript-da `const [a, ...b] = [1, 2, 3, 4]` amali bajarilsa, `b` nima bo'ladi?",
+        options: ["[2, 3, 4]", "2", "[1, 2, 3, 4]", "undefined"],
+        correct: 0,
+        exp: "Rest operatori (...) qolgan barcha elementlarni yangi massiv sifatida yig'ib oladi."
+      },
+      {
+        q: "2. Node.js nima uchun bitta oqimli (single-threaded) bo'lsa ham yuqori tezlikda millionlab so'rovlarni boshqaradi?",
+        options: ["Chunki unda 100 ta yadro bor", "Event Loop va Asinxron Non-blocking I/O orqali", "Chunki u faqat matn o'qiydi", "U hech qachon xotira ishlatmaydi"],
+        correct: 1,
+        exp: "Node.js Event Loop va Libuv yordamida so'rovlarni to'xtatmasdan (non-blocking) ishlaydi."
+      },
+      {
+        q: "3. Massivdan faqat juft sonlarni ajratib olish uchun qaysi metod eng to'g'ri?",
+        options: ["array.map()", "array.forEach()", "array.filter()", "array.reduce()"],
+        correct: 2,
+        exp: "`filter()` massivdagi har bir elementni shart bo'yicha tekshirib, yangi saralangan massiv qaytaradi."
+      }
+    ];
+
+    let quizCurrentIndex = 0;
+    let quizScore = 0;
+
+    function getQuizTesterHtml() {
+      quizCurrentIndex = 0;
+      quizScore = 0;
+      return renderQuizCard(0);
+    }
+
+    function renderQuizCard(idx) {
+      const q = sampleQuestions[idx];
+      return `
+        <div class="space-y-4 text-xs font-sans" id="quizContainerBox">
+          <div class="flex justify-between items-center text-gray-400 text-[11px]">
+            <span>Savol ${idx + 1} / ${sampleQuestions.length}</span>
+            <span>Ball: <strong class="text-emerald-400">${quizScore}</strong></span>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-surfaceBg border border-white/10 font-bold text-white leading-relaxed">
+            ${q.q}
+          </div>
+
+          <div class="space-y-2">
+            ${q.options.map((opt, i) => `
+              <button onclick="handleQuizAnswer(${idx}, ${i})" class="w-full p-3 rounded-xl glass hover:bg-white/10 text-left text-gray-200 hover:text-white transition flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center font-bold text-[10px]">${['A', 'B', 'C', 'D'][i]}</span>
+                <span>${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <div id="quizFeedbackBox" class="hidden p-3 rounded-xl text-xs"></div>
+        </div>
+      `;
+    }
+
+    function handleQuizAnswer(qIdx, selected) {
+      playClick();
+      const q = sampleQuestions[qIdx];
+      const feedback = document.getElementById('quizFeedbackBox');
+      feedback.classList.remove('hidden');
+
+      if (selected === q.correct) {
+        quizScore += 10;
+        feedback.className = 'p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 space-y-1';
+        feedback.innerHTML = `<strong>✅ To'g'ri javob! (+10 Ball)</strong><p class="text-[11px] text-gray-300">${q.exp}</p>`;
+        playSuccess();
+      } else {
+        feedback.className = 'p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 space-y-1';
+        feedback.innerHTML = `<strong>❌ Noto'g'ri.</strong> To'g'ri javob: <em>${q.options[q.correct]}</em><p class="text-[11px] text-gray-300">${q.exp}</p>`;
+      }
+
+      setTimeout(() => {
+        if (qIdx + 1 < sampleQuestions.length) {
+          document.getElementById('quizContainerBox').outerHTML = renderQuizCard(qIdx + 1);
+        } else {
+          document.getElementById('quizContainerBox').innerHTML = `
+            <div class="text-center p-6 space-y-3">
+              <div class="text-3xl">🏆</div>
+              <h4 class="text-base font-bold text-white">Test Yakunlandi!</h4>
+              <p class="text-xs text-gray-300">Sizning natijangiz: <strong class="text-emerald-400 font-mono text-sm">${quizScore} / ${sampleQuestions.length * 10} ball</strong></p>
+              <button onclick="openDemoModal('quiz-tester')" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs">Qaytadan boshlash</button>
+            </div>
+          `;
+          playLevelUp();
+        }
+      }, 1500);
+    }
+
+    // --- 4. Interactive Hacker Terminal (CLI Mode) ---
+    function toggleTerminalModal() {
+      playClick();
+      const modal = document.getElementById('terminalModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        setTimeout(() => document.getElementById('terminalInput').focus(), 50);
+      }
+    }
+
+    function handleTerminalKey(e) {
+      if (e.key === 'Enter') {
+        const input = document.getElementById('terminalInput');
+        const cmd = input.value.trim();
+        if (!cmd) return;
+        input.value = '';
+        executeTerminalCommand(cmd);
+      }
+    }
+
+    function executeTerminalCommand(cmd) {
+      const body = document.getElementById('terminalBody');
+      const lower = cmd.toLowerCase().trim();
+
+      body.innerHTML += `<p><span class="text-emerald-400">samar@station:~$</span> <span class="text-white">${cmd}</span></p>`;
+
+      let output = '';
+      if (lower === 'help') {
+        output = `Mavjud buyruqlar:
+• <span class="text-emerald-400">bio</span> — Samar haqida to'liq ma'lumot
+• <span class="text-emerald-400">skills</span> — Texnologiyalar ro'yxati
+• <span class="text-emerald-400">projects</span> — Loyihalar va demolar
+• <span class="text-emerald-400">rpg</span> — Solo Leveling qahramon statusi
+• <span class="text-emerald-400">cv</span> — Rezyume ma'lumotlari
+• <span class="text-emerald-400">matrix</span> — Yashil kiber-yomg'ir rejimi
+• <span class="text-emerald-400">clear</span> — Terminalni tozalash
+• <span class="text-emerald-400">exit</span> — Terminaldan chiqish`;
+      } else if (lower === 'bio') {
+        output = `👤 <strong>Samar Baxtiyorov</strong> (16 yosh)
+📍 Yakkabog', Qashqadaryo, O'zbekiston
+💻 Full-Stack Software Engineer & AI Architect
+👨‍🏫 Mentor: TECH BRIDGE Academy & Zamin O'quv Markazi
+🎯 Maqsad: Xalqaro darajadagi top muhandis bo'lish & Cadillac Escalade`;
+      } else if (lower === 'skills') {
+        output = `JavaScript (92%) | Node.js (90%) | Gemini AI (95%) | GrammY Telegram (98%) | TailwindCSS (92%) | PostgreSQL (82%) | Git/GitHub (88%)`;
+      } else if (lower === 'projects') {
+        output = `1. Anora AI Ecosystem (Google Gemini + Telegram)
+2. Solo Leveling RPG Life Engine (Gamification)
+3. FAANG LeetCode Arena (DSA runner)
+4. Cadillac Escalade Dream Fund Simulator
+5. Tech Bridge Classroom Quiz Platform`;
+      } else if (lower === 'rpg') {
+        output = `🎮 O'yinchi: Samar | Level: ${rpgState.level} (D-Rank Hunter)
+XP: ${rpgState.currentXp}/${rpgState.neededXp} | Kuch: ${rpgState.stats.kuch} | Aql: ${rpgState.stats.aql} | Muhandis: ${rpgState.stats.muhandislik}`;
+      } else if (lower === 'cv') {
+        toggleTerminalModal();
+        openCvModal();
+        return;
+      } else if (lower === 'matrix') {
+        output = `<span class="text-emerald-400 font-bold">Wake up, Neo... The Matrix has you. Follow the white rabbit. 🐇</span>`;
+      } else if (lower === 'clear') {
+        body.innerHTML = '';
+        return;
+      } else if (lower === 'exit') {
+        toggleTerminalModal();
+        return;
+      } else {
+        output = `<span class="text-rose-400">Buyruq topilmadi: "${cmd}". Yordam uchun 'help' deb yozing.</span>`;
+      }
+
+      body.innerHTML += `<div class="text-gray-300 leading-relaxed">${output}</div>`;
+      body.scrollTop = body.scrollHeight;
+      playClick();
+    }
+
+    // --- 5. CV Modal & Print Logic ---
+    function openCvModal() {
+      playClick();
+      document.getElementById('cvModal').classList.remove('hidden');
+    }
+
+    function closeCvModal() {
+      playClick();
+      document.getElementById('cvModal').classList.add('hidden');
+    }
+
+    function printCv() {
+      window.print();
+    }
+
+    // Keyboard shortcut: Ctrl + ` or ~ opens terminal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '`' && e.ctrlKey) {
+        toggleTerminalModal();
+      }
+    });
+
+    // Start on load
+    window.addEventListener('DOMContentLoaded', initPortfolio);
   </script>
 </body>
 </html>

@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-03",
+  "glasses": 9,
+  "totalMl": 2250,
+  "history": [
+    {
+      "time": "22:32",
+      "glasses": 1,
+      "ml": 250
+    },
+    {
+      "time": "22:32",
+      "glasses": 1,
+      "ml": 250
+    },
+    {
+      "time": "22:32",
+      "glasses": 1,
+      "ml": 250
+    },
+    {
+      "time": "22:32",
+      "glasses": 1,
+      "ml": 250
+    },
+    {
+      "time": "22:32",
+      "glasses": 1,
+      "ml": 250
+    },
+    {
+      "time": "22:32",
+      "glasses": 1,
+      "ml": 250
+    },
+    {
+      "time": "22:32",
+      "glasses": 1,
+      "ml": 250
+    },
+    {
+      "time": "22:32",
+      "glasses": 2,
+      "ml": 500
+    }
+  ],
+  "streak": 0
+}

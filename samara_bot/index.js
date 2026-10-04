@@ -725,6 +725,102 @@ bot.callbackQuery('school_no', async (ctx) => {
   );
 });
 
+// Interactive Dashboard Callback Queries
+bot.callbackQuery('btn_today_ai', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.replyWithChatAction('typing');
+  try {
+    const { replyText } = await ai.processUserMessage(
+      ctx.from.id,
+      'Bugungi rejam va vazifalarimni juda ixcham, toza va aniq qilib ko\'rsat (3-5 qatordan oshmasin, professional motivatsiya bilan).',
+      null,
+      null,
+      bot
+    );
+    await ctx.reply(replyText, { reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`Xatolik: ${err.message}`);
+  }
+});
+
+bot.callbackQuery('btn_open_rpg', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply(rpg.getStatusCard(), { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+bot.callbackQuery('btn_open_portfolio', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await portfolioSync.syncPortfolio();
+  const summary = portfolioSync.getPortfolioSummary();
+  await ctx.reply(summary, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+bot.callbackQuery('btn_open_escalade', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const kb = new InlineKeyboard()
+    .text('+50 000 so\'m 🚗', 'dream_add_50000')
+    .text('+100 000 so\'m 🚗', 'dream_add_100000')
+    .row()
+    .text('+300 000 so\'m 🚗', 'dream_add_300000')
+    .text('+500 000 so\'m 🚗', 'dream_add_500000');
+  await ctx.reply(dream.getDreamSummary(), { parse_mode: 'Markdown', reply_markup: kb });
+});
+
+bot.callbackQuery('btn_open_crm', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply(crm.getStudentsSummary(), { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+bot.callbackQuery('btn_finance_history', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const hist = debts.getDebtsSummary();
+  await ctx.reply(`📊 **MOLIYA VA HISOB-KITOBLAR:**\n\n${hist}`, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+bot.callbackQuery('btn_open_recall', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply('🧠 **Xotirani qidirish:**\nQidirish uchun quyidagicha yozing:\n`/esla <savolingiz yoki mavzu>`\nMasalan: `/esla o\'quvchilar to\'lovi nima bo\'ldi?`', { parse_mode: 'Markdown' });
+});
+
+bot.callbackQuery('btn_run_backup', async (ctx) => {
+  await ctx.answerCallbackQuery({ text: 'Zaxiralash boshlandi...' });
+  await ctx.reply('☁️ Obsidian Vault arxivlanmoqda va Telegram bulutiga yuklanmoqda...');
+  await backup.sendBackupToTelegram(bot, ctx.chat.id);
+});
+
+bot.callbackQuery('btn_open_reels', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply('🎬 **Reels Ssenariy tuzish:**\n`/reels <mavzu>` deb yozing.\nMisol: `/reels 16 yoshda dasturlashni qanday boshlash kerak?`', { parse_mode: 'Markdown' });
+});
+
+bot.callbackQuery('btn_open_karusel', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply('📸 **Karusel Post tuzish:**\n`/karusel <mavzu>` deb yozing.\nMisol: `/karusel Har bir junior bilishi kerak bo\'lgan 5 ta Git buyrug\'i`', { parse_mode: 'Markdown' });
+});
+
+bot.callbackQuery('btn_open_arena', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const p = arena.getDailyProblem();
+  await ctx.reply(p.text, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+bot.callbackQuery('btn_open_fitness', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const f = fitness.getFitnessSummary();
+  await ctx.reply(f, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+bot.callbackQuery('btn_open_cv', async (ctx) => {
+  await ctx.answerCallbackQuery();
+  await ctx.reply('📄 **Harvard CV tayyorlanmoqda...**');
+  try {
+    const res = await resume.generateHarvardResume();
+    await ctx.reply(res.resumeText, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`Xatolik: ${err.message}`);
+  }
+});
+
 // Photo handler (Save to Media Archive & Analyze)
 bot.on('message:photo', async (ctx) => {
   saveChatId(ctx.chat.id);
@@ -975,55 +1071,101 @@ bot.on('message:text', async (ctx) => {
     return;
   }
 
-  // 8. Tugma: 📋 Bugun
+  // 8. Tugma: 📋 Bugun (Interactive Daily Mission Dashboard)
   if (text === '📋 Bugun') {
-    await ctx.replyWithChatAction('typing');
-    try {
-      const { replyText } = await ai.processUserMessage(
-        ctx.from.id,
-        'Bugungi rejam va vazifalarimni juda ixcham, toza va oddiy qilib ko\'rsat (3-5 qatordan oshmasin, "###" yoki "---" ishlatma).',
-        null,
-        null,
-        bot
-      );
-      await ctx.reply(replyText, { reply_markup: mainKeyboard });
-    } catch (err) {
-      await ctx.reply(`Xatolik: ${err.message}`);
+    const wData = water.loadData();
+    const d = new Date();
+    const day = d.getDay();
+    const isAcademyDay = day === 1 || day === 3 || day === 5;
+    const isLongSchool = day === 1 || day === 2;
+    const schoolEnd = isLongSchool ? '12:50' : '12:05';
+    const dayNames = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+
+    let msg = `🌅 **KUNLIK BOSHQARUV PANELI — ${dayNames[day].toUpperCase()}**\n\n`;
+    msg += `🏫 **Maktab:** 08:00 – ${schoolEnd} *(Uyga 20 daqiqada)*\n`;
+    if (isAcademyDay) {
+      msg += `🚗 **14:00 – 16:00:** TECH BRIDGE Academy *(13:20 yo'lga chiqish)*\n`;
+      msg += `👨‍🏫 **18:00 – 19:30:** Zamin o'quv markazida bolalarga dars\n`;
+    } else if (day !== 0) {
+      msg += `💻 **14:00 – 16:30:** Deep Work & Shaxsiy IT loyihalar\n`;
+      msg += `🏋️ **16:30 – 17:30:** Calisthenics: Turnik va Brusya\n`;
+      msg += `⚔️ **18:00 – 19:30:** FAANG LeetCode algoritmlari\n`;
+    } else {
+      msg += `📊 **Yakshanba:** Haftalik tahlil, strategiya va mutolaa\n`;
     }
+    msg += `\n💧 **Suv:** ${wData.glasses}/${water.DAILY_TARGET_GLASSES} stakan (${Math.round((wData.glasses / water.DAILY_TARGET_GLASSES) * 100)}%)\n`;
+    msg += `🎮 **Solo Leveling:** Lvl 3 (D-Rank Hunter ⚡)`;
+
+    const kb = new InlineKeyboard()
+      .text('💧 +1 Suv', 'water_add_1')
+      .text('💧 +2 Suv', 'water_add_2')
+      .row()
+      .text('🤖 AI Reja Tafsiloti', 'btn_today_ai')
+      .text('🎮 RPG Status', 'btn_open_rpg')
+      .row()
+      .text('🌐 Shaxsiy Portfolio & Demolar', 'btn_open_portfolio');
+
+    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: kb });
     return;
   }
 
-  // 3. Tugma: 💰 Hamyon
+  // 3. Tugma: 💰 Hamyon (Interactive Financial & Dream HUD)
   if (text === '💰 Hamyon') {
-    await ctx.replyWithChatAction('typing');
-    try {
-      const { replyText } = await ai.processUserMessage(
-        ctx.from.id,
-        'Bugungi xarajat, daromad va qoldiq pulni 2-3 qatorda qisqa ko\'rsat.',
-        null,
-        null,
-        bot
-      );
-      await ctx.reply(replyText, { reply_markup: mainKeyboard });
-    } catch (err) {
-      await ctx.reply(`Xatolik: ${err.message}`);
-    }
+    const dSummary = dream.getDreamSummary();
+    const kb = new InlineKeyboard()
+      .text('🚗 Escalade Hisobi', 'btn_open_escalade')
+      .text('👥 To\'lovlar (/dars)', 'btn_open_crm')
+      .row()
+      .text('+50 000 so\'m 🚗', 'dream_add_50000')
+      .text('+100 000 so\'m 🚗', 'dream_add_100000')
+      .row()
+      .text('📊 Moliya Tarixi', 'btn_finance_history');
+
+    let msg = `💰 **SHAXSIY MOLIYA & JAMG'ARMA MARKAZI**\n\n`;
+    msg += `${dSummary}\n\n`;
+    msg += `💡 _Eslatma: Har safar daromad topganingizda yoki o'quvchilar to'lov qilganda 30% avtomatik tarzda Cadillac Escalade fondiga hisoblanadi._`;
+
+    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: kb });
     return;
   }
 
-  // 4. Tugma: 📸 Xotira
+  // 4. Tugma: 📸 Xotira (Second Brain & Media Vault)
   if (text === '📸 Xotira') {
-    const msg = `📸 **Xotiralar va Media Arxiv:**\n\nMenga xohlagan **surat** yoki **video** tashlang — ularni kelajak uchun saqlab qo'yaman.\n\nKeyinchalik istalgan payt:\n*«Falonchi rasmni top»* yoki *«Videomni tashla»* deb so'rashingiz mumkin!`;
-    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    const kb = new InlineKeyboard()
+      .text('🧠 Xotirani Qidirish (/esla)', 'btn_open_recall')
+      .text('☁️ Bulut Zaxira', 'btn_run_backup')
+      .row()
+      .text('🎬 Reels Ssenariy (/reels)', 'btn_open_reels')
+      .text('📸 Karusel Post (/karusel)', 'btn_open_karusel');
+
+    const msg = `📸 **XOTIRALAR VA IKKINCHI MIYA ARXIVI**\n\n` +
+      `Menga xohlagan **surat**, **video** yoki **ovozli xabar** tashlang — barchasi Obsidian Vault'dagi shaxsiy media arxivga xavfsiz saqlanadi.\n\n` +
+      `Keyinchalik istalgan payt:\n` +
+      `• *«Falonchi rasmni top»* yoki *«Videomni tashla»* deb so'rasangiz, darhol topib beraman!`;
+
+    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: kb });
     return;
   }
 
-  // 5. Tugma: 🎯 Maqsadlar
+  // 5. Tugma: 🎯 Maqsadlar (RPG, Streaks & Career Goals)
   if (text === '🎯 Maqsadlar') {
     const s = streak.getStreakSummary();
-    const goals = obsidian.getGoalsContent();
-    const msg = `🎯 **Maqsadlar va Zanjir:**\n\n${s}\n\n${goals.substring(0, 300)}`;
-    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    const kb = new InlineKeyboard()
+      .text('🎮 Solo Leveling (/rpg)', 'btn_open_rpg')
+      .text('⚔️ LeetCode Masala (/arena)', 'btn_open_arena')
+      .row()
+      .text('🏋️ Sport & Rekordlar', 'btn_open_fitness')
+      .text('📄 Harvard CV (/cv)', 'btn_open_cv');
+
+    const msg = `🎯 **MAQSADLAR VA INTIZOM MONITORINGI**\n\n` +
+      `${s}\n\n` +
+      `🏆 **Asosiy Nishonlar:**\n` +
+      `• 💻 Top Full-Stack & AI dasturchi bo'lish\n` +
+      `• 🏋️ Calisthenics: Turnik 20+ rekord, brusya va sog'lom tana\n` +
+      `• 🚗 Cadillac Escalade Sport Platinum ($120,000)\n` +
+      `• 👨‍🏫 TECH BRIDGE & Zamin akademiyalarida 50+ kuchli shogird tayyorlash`;
+
+    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: kb });
     return;
   }
 
