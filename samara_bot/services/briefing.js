@@ -17,9 +17,11 @@ const DAYS_UZ = [
 
 async function generateMorningBriefing() {
   const now = new Date();
-  const dayName = DAYS_UZ[now.getDay()];
-  const isSunday = now.getDay() === 0;
-  const isEarlySchool = now.getDay() === 1 || now.getDay() === 2;
+  const dayIndex = now.getDay();
+  const dayName = DAYS_UZ[dayIndex];
+  const isSunday = dayIndex === 0;
+  const isAcademyDay = dayIndex === 1 || dayIndex === 3 || dayIndex === 5; // Dush, Chor, Juma
+  const isEarlySchool = dayIndex === 1 || dayIndex === 2; // Dush, Sesh 12:05 da tugaydi
 
   // 1. Fetch weather in Yakkabog'
   let weatherText = 'Yakkabog‘da havo musaffo';
@@ -30,32 +32,45 @@ async function generateMorningBriefing() {
     }
   } catch (_) {}
 
-  // 2. School & Teaching schedule
+  // 2. School & Academies exact schedule
   let scheduleNote = '';
+  let speechSchedule = '';
+  const schoolEndTime = isEarlySchool ? '12:05' : '12:50';
+
   if (isSunday) {
-    scheduleNote = "Bugun yakshanba — chuqur IT loyihalar, mutolaa va oila bilan dam olish kuni.";
+    scheduleNote = "Bugun yakshanba — maktab yo'q! Haftalik strategik audit, chuqur loyihalar va oila kuni.";
+    speechSchedule = "Bugun yakshanba, maktab yo‘q. Haftalik audit va oilangiz bilan dam olish kuni.";
+  } else if (isAcademyDay) {
+    scheduleNote = `Maktab 08:00 dan ${schoolEndTime} gacha (07:40 da chiqish). Soat 14:00 da TECH BRIDGE Academy (13:20 da yo'lga chiqish), soat 18:00 da Zamin o'quv markazida darsingiz bor.`;
+    speechSchedule = `Soat 08:00 dan ${schoolEndTime} gacha maktab. Soat 14:00 da Tech Bridge, soat 18:00 da Zamin o‘quv markazida darsingiz bor.`;
   } else {
-    const schoolEnd = isEarlySchool ? '12:50' : '13:30';
-    scheduleNote = `Soat 08:00 dan ${schoolEnd} gacha maktab, soat 15:00 da o‘quv markazida darsingiz bor.`;
+    // Sesh, Pay, Shan
+    scheduleNote = `Maktab 08:00 dan ${schoolEndTime} gacha (07:40 da chiqish). Tushdan keyin: Deep Work IT (Node.js & LeetCode), Calisthenics va kitob mutolaasi.`;
+    speechSchedule = `Soat 08:00 dan ${schoolEndTime} gacha maktab. Tushdan keyin esa chuqur dasturlash, Leetcode va turnik mashqlari vaqti.`;
   }
 
   // 3. Calisthenics goal
   const fitnessGoal = "10-15 ta turnik va 25 ta anjimaniya bilan qon aylanishini kuchaytiramiz.";
 
-  // 4. TTS audio script (designed to sound natural, polite, and energetic when spoken)
-  const audioScript = `Xayrli tong, Samarbek! Bugun ${dayName}. ${weatherText}. Bugungi asosiy rejamiz: ${scheduleNote} Sportda: ${fitnessGoal} O‘rningizdan tetik turing, bir stakan toza suv iching. Katta orzuyimiz — qora Cadillac Escalade va moliyaviy erkinlik sari yana bir g‘alabali kun boshlandi. Kuningiz barakali o‘tsin, chempion!`;
+  // 4. TTS audio script
+  const audioScript = `Xayrli tong, Samarbek! Bugun ${dayName}. ${weatherText}. Bugungi jadvalimiz: ${speechSchedule} Sportda: ${fitnessGoal} 07:40 da maktabga yo‘lga chiqamiz. O‘rningizdan tetik turing, bir stakan toza suv iching. Qora Cadillac Escalade va moliyaviy erkinlik sari yana bir g‘alabali kun boshlandi. Kuningiz barakali o‘tsin, chempion!`;
 
-  // 5. Formatted Markdown text for Telegram message
+  // 5. Formatted Markdown text
   let text = `🌅 **XAYRLI TONG, SAMARBEK! (TONGI BRİFİNG)** 🦁\n\n`;
   text += `📅 **Bugun:** ${dayName}\n`;
   text += `🌤 **Ob-havo:** ${weatherText}\n\n`;
-  text += `🎯 **Bugungi 3 ta asosiy nishon:**\n`;
-  text += `1. 🏫 **Maktab & Dars:** ${scheduleNote}\n`;
-  text += `2. 🏋️ **Calisthenics:** ${fitnessGoal}\n`;
-  text += `3. 🇬🇧 **Ingliz tili & IT:** Yangi C1 so'zlar va toza kod yozish\n\n`;
-  text += `💧 **Birinchi vazifa:** 1 stakan toza suv ichib, tanani uyg'oting!\n`;
-  text += `🚗 **Orzu:** Cadillac Escalade fondi kutmoqda.\n\n`;
-  text += `🎙 _Quyidagi 45 soniyalik ovozli brifingni tinglang:_ 👇`;
+  text += `🎯 **Bugungi aniq jadval va nishonlar:**\n`;
+  text += `1. 🏫 **Maktab:** 07:40 yo'lga chiqish, dars 08:00 — **${schoolEndTime}** gacha\n`;
+  if (isAcademyDay) {
+    text += `2. 🚀 **TECH BRIDGE Academy:** 14:00 — 16:00 (13:20 da yo'lga chiqish, 40 min yo'l)\n`;
+    text += `3. 👨‍🏫 **Zamin O'quv Markazi:** 18:00 — 19:30 (Bolalarga dars berish)\n`;
+  } else if (!isSunday) {
+    text += `2. 💻 **Deep Work & Kod:** 14:00 — 16:30 (Node.js, full-stack & LeetCode)\n`;
+    text += `3. 🏋️ **Calisthenics:** 16:30 — 17:30 (Turnik, anjimaniya, brusya)\n`;
+  }
+  text += `\n💧 **Birinchi vazifa:** 1 stakan toza suv ichib, miyani uyg'oting!\n`;
+  text += `🚗 **Katta orzu:** Cadillac Escalade jamg'arma fondi kutmoqda.\n\n`;
+  text += `🎙 _Quyidagi 45 soniyalik shaxsiy ovozli brifingni tinglang:_ 👇`;
 
   // 6. Generate voice buffer
   let voiceBuffer = null;

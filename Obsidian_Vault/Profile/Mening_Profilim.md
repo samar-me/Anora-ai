@@ -1,28 +1,27 @@
-# 👤 Shaxsiy Profilim — Samar
+# 👤 Shaxsiy Profilim — Samar Baxtiyorov Suratovich
 
-Oxirgi yangilanish: 2026-10-03
+Oxirgi yangilanish: 2026-yil
+Joylashuv: **Qashqadaryo viloyati, Yakkabog' tumani, Jeyda qishlog'i**
+
+---
 
 ## 📌 Asosiy Ma'lumotlar:
-- **Ism:** Samar
-- **Yosh:** 16
-- **Yashash joyi:** Qashqadaryo viloyati, Yakkabog' tumani, Jeyda qishlog'i
-- **Mashg'ulot / Kasb:** Bo'lajak kuchli dasturchi va IT tadbirkor
-- **O'qish joyi:** Maktab o'quvchisi
+- **Ism-familiya:** Samar Baxtiyorov Suratovich
+- **Yosh:** 16 yosh
+- **Yashash joyi:** Yakkabog' tumani, Jeyda qishlog'i
+- **Mashg'ulot:** Maktab o'quvchisi, Dasturchi, TECH BRIDGE & Zamin o'quv markazi ustozi
+- **Asosiy orzu:** Dunyo darajasidagi top Senior dasturchi bo'lish, qora Cadillac Escalade, moliyaviy erkinlik va shaxsiy IT imperiya.
 
-## 🎯 Asosiy Orzu va Maqsadlar:
-> "Amerikada ta'lim olish hamda milliard dollarlik shaxsiy IT biznes imperiyasini barpo etish"
+---
 
-## 💡 Qiziqishlar va Xobbilar:
-- 🌟 Dasturlash (IT)
-- 🌟 Boks / Sport
-- 🌟 Biznes va moliya
-- 🌟 Ingliz tili
-- 🌟 Kitob mutolaasi
-
-## ⚡ Kuchli Tomonlar:
-- 💪 Intizom
-- 💪 Mehnatsevarlik
-- 💪 Yangi bilimlarga chanqoqlik
-
-## 📝 Qo'shimcha Faktlar va Qaydlar:
-- 📌 To'liq ismi: Samar Baxtiyorov Suratovich. Repetitorlik — asosiy kasb emas, maqsadi sari bir bosqich.
+## 📅 Kun Tartibi va Mashg'ulotlar:
+- **Maktab:** 
+  - Har kuni soat 08:00 da boshlanadi (07:40 da yo'lga chiqiladi, 20 daqiqa yo'l).
+  - Dushanba, Seshanba: 12:05 da tugaydi (12:25 da uyda).
+  - Chorshanba, Payshanba, Juma, Shanba: 12:50 da tugaydi (13:10 da uyda).
+  - Yakshanba: Dam olish kuni.
+- **O'quv markazlari (Dushanba, Chorshanba, Juma):**
+  - **TECH BRIDGE Academy:** 14:00 - 16:00 (borish 40 min, qaytish 40 min).
+  - **Zamin o'quv markazi (Tech Bridge):** 18:00 - 19:30 (bolalarga dars berish).
+- **Juft kunlar (Seshanba, Payshanba, Shanba):**
+  - Deep Work IT, LeetCode, Calisthenics va kitob mutolaasi.

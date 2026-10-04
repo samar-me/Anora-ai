@@ -80,19 +80,49 @@ const mainKeyboard = new Keyboard()
 // Helper: Time blocking text
 function getTimeBlockingSchedule() {
   const d = new Date();
-  const day = d.getDay(); // 1 = Dush, 2 = Sesh
-  const isEarlySchool = day === 1 || day === 2;
-  const schoolTime = isEarlySchool ? '08:00 - 12:50' : '08:00 - 13:30';
+  const day = d.getDay(); // 0 = Yak, 1 = Dush, ...
+  const isEarlySchool = day === 1 || day === 2; // Dush, Sesh 12:05
+  const isAcademyDay = day === 1 || day === 3 || day === 5; // Dush, Chor, Juma
+  const schoolEndTime = isEarlySchool ? '12:05' : '12:50';
+  const homeTime = isEarlySchool ? '12:25' : '13:10';
 
-  return `⏱️ **Bugungi Time-Blocking (Vaqt Taqsimlagich):**
+  if (day === 0) {
+    return `⏱️ **Bugungi Time-Blocking (Yakshanba — Strategik Reja):**
 
-🌅 **06:00 - 07:30** — Uyg'onish, suv, sport (turnik, anjimaniya)
-🏫 **${schoolTime}** — Maktab (Diqqat markazida)
-🍲 **13:30 - 15:00** — Tushlik va quvvat to'plash
-👨‍🏫 **15:00 - 17:00** — O'quv markazi (Dars berish)
-💻 **17:30 - 19:30** — Deep Work: IT & Ingliz tili
-📚 **20:00 - 21:30** — Kitob mutolaasi va oila
-😴 **22:00** — Uxlash va to'liq dam olish`;
+🌅 **07:00 - 08:30** — Uyg'onish, toza suv, yengil badantarbiya
+📊 **09:00 - 12:00** — Haftalik xulosa, kitob mutolaasi, shaxsiy loyihalar
+🍲 **13:00 - 15:00** — Oila davrasida tushlik va dam olish
+🌳 **15:30 - 18:00** — Sayr, toza havo, yaqinlar bilan suhbat
+🧠 **19:00 - 21:00** — Kelgusi hafta rejalarini tuzish
+😴 **22:00** — Uxlash va yangi haftaga quvvat to'plash`;
+  }
+
+  if (isAcademyDay) {
+    return `⏱️ **Bugungi Time-Blocking (Dush / Chor / Juma — O'quv Markazlari Kuni):**
+
+🌅 **06:00 - 07:30** — Uyg'onish, toza suv, turnik & anjimaniya
+🚶 **07:40 - 08:00** — Maktabga yo'l (20 daqiqa)
+🏫 **08:00 - ${schoolEndTime}** — Maktab darslari
+🏠 **${homeTime}** — Uyga qaytish va tushlik
+🚗 **13:20 - 14:00** — TECH BRIDGE ga yo'l (40 daqiqa)
+🚀 **14:00 - 16:00** — **TECH BRIDGE Academy darslari**
+🚗 **16:00 - 16:40** — Qaytish yo'li (40 daqiqa) va dam olish
+👨‍🏫 **18:00 - 19:30** — **Zamin o'quv markazida bolalarga dars berish (Ustoz)**
+📚 **20:00 - 21:30** — Kitob mutolaasi, oila va kechki ovqat
+😴 **22:00** — Uxlash`;
+  }
+
+  return `⏱️ **Bugungi Time-Blocking (Sesh / Pay / Shan — Deep Work Kuni):**
+
+🌅 **06:00 - 07:30** — Uyg'onish, toza suv, sport
+🚶 **07:40 - 08:00** — Maktabga yo'l (20 daqiqa)
+🏫 **08:00 - ${schoolEndTime}** — Maktab darslari
+🏠 **${homeTime}** — Uyga yetib kelish va tushlik
+💻 **14:00 - 16:30** — **Deep Work IT Sprint (Node.js, loyihalar)**
+🏋️ **16:30 - 17:30** — **Calisthenics (Turnik, brusya, PR rekordlar)**
+⚔️ **18:00 - 19:30** — **FAANG LeetCode & Ingliz tili C1**
+📚 **20:00 - 21:30** — Kitob mutolaasi va sarhisob
+😴 **22:00** — Uxlash`;
 }
 
 // /start command
@@ -525,16 +555,37 @@ bot.command(['tungi', 'nightshift'], async (ctx) => {
 // Callback queries for School Check-in
 bot.callbackQuery('school_yes', async (ctx) => {
   await ctx.answerCallbackQuery();
-  const schedule = `🎉 **Zo'r! Kuningiz unumli o'tgan bo'lsin.**
+  const d = new Date();
+  const day = d.getDay();
+  const isAcademyDay = day === 1 || day === 3 || day === 5;
 
-Kunning 2-qismi (Time Blocking):
-🍲 **13:30 - 15:00** — Tushlik va dam olish
-👨‍🏫 **15:00 - 17:00** — O'quv markazi (Dars berish)
-💻 **17:30 - 19:30** — Deep Work: IT & Ingliz tili
+  let schedule = '';
+  if (isAcademyDay) {
+    schedule = `🎉 **Zo'r! Maktab yakunlandi, 20 daqiqada uyga yetib oling.**
+
+Kunning 2-qismi (O'quv markazlari):
+🍲 **Tushlik va quvvat to'plash**
+🚗 **13:20** — TECH BRIDGE ga yo'lga chiqish (40 min yo'l)
+🚀 **14:00 - 16:00** — TECH BRIDGE Academy darslari
+🚗 **16:00 - 16:40** — Qaytish yo'li va dam olish
+👨‍🏫 **18:00 - 19:30** — Zamin o'quv markazida bolalarga dars berish (Ustoz)
+📚 **20:00 - 21:30** — Kitob mutolaasi va oila
+😴 **22:00** — Uxlash
+
+Kuningiz g'alabalar bilan davom etsin, ustoz! 💪`;
+  } else {
+    schedule = `🎉 **Zo'r! Maktab yakunlandi, 20 daqiqada uyga yetib oling.**
+
+Kunning 2-qismi (Deep Work & Sport):
+🍲 **To'yimli tushlik va dam olish**
+💻 **14:00 - 16:30** — Deep Work: IT dasturlash (Node.js & loyihalar)
+🏋️ **16:30 - 17:30** — Calisthenics: Turnik, brusya va rekordlar
+⚔️ **18:00 - 19:30** — FAANG LeetCode algoritmlari & Ingliz tili C1
 📚 **20:00 - 21:30** — Kitob mutolaasi
 😴 **22:00** — Uxlash
 
 Kuch to'plab, oldinga davom etamiz! 💪`;
+  }
 
   await ctx.editMessageText(schedule, { parse_mode: 'Markdown' });
 });
@@ -1073,8 +1124,8 @@ cron.schedule('0 14 * * *', async () => {
 }, { timezone: 'Asia/Tashkent' });
 
 // Maktab rejimi check-in:
-// Dushanba va Seshanba kunlari soat 12:50 da
-cron.schedule('50 12 * * 1,2', async () => {
+// Dushanba va Seshanba kunlari soat 12:05 da
+cron.schedule('5 12 * * 1,2', async () => {
   const chatId = getChatId();
   if (!chatId) return;
   try {
@@ -1082,7 +1133,25 @@ cron.schedule('50 12 * * 1,2', async () => {
       .text('✅ Ha, chiqdim', 'school_yes')
       .text('❌ Yo\'q, maktabdaman', 'school_no');
 
-    await bot.api.sendMessage(chatId, '🏫 **Maktabdan chiqdingizmi?**', {
+    await bot.api.sendMessage(chatId, '🏫 **Maktab darslari tugadi (12:05)! Chiqdingizmi?**\n_Uyga 20 daqiqada yetib oling!_', {
+      parse_mode: 'Markdown',
+      reply_markup: kb,
+    });
+  } catch (e) {
+    console.error('12:05 school cron error:', e.message);
+  }
+}, { timezone: 'Asia/Tashkent' });
+
+// Chorshanba - Shanba kunlari soat 12:50 da
+cron.schedule('50 12 * * 3,4,5,6', async () => {
+  const chatId = getChatId();
+  if (!chatId) return;
+  try {
+    const kb = new InlineKeyboard()
+      .text('✅ Ha, chiqdim', 'school_yes')
+      .text('❌ Yo\'q, maktabdaman', 'school_no');
+
+    await bot.api.sendMessage(chatId, '🏫 **Maktab darslari tugadi (12:50)! Chiqdingizmi?**\n_Uyga 20 daqiqada yetib oling!_', {
       parse_mode: 'Markdown',
       reply_markup: kb,
     });
@@ -1091,21 +1160,33 @@ cron.schedule('50 12 * * 1,2', async () => {
   }
 }, { timezone: 'Asia/Tashkent' });
 
-// Chorshanba - Shanba kunlari soat 13:30 da
-cron.schedule('30 13 * * 3,4,5,6', async () => {
+// Dushanba, Chorshanba, Juma — 13:20 da: TECH BRIDGE ga yo'lga chiqish eslatmasi
+cron.schedule('20 13 * * 1,3,5', async () => {
   const chatId = getChatId();
   if (!chatId) return;
   try {
-    const kb = new InlineKeyboard()
-      .text('✅ Ha, chiqdim', 'school_yes')
-      .text('❌ Yo\'q, maktabdaman', 'school_no');
-
-    await bot.api.sendMessage(chatId, '🏫 **Maktabdan chiqdingizmi?**', {
-      parse_mode: 'Markdown',
-      reply_markup: kb,
-    });
+    await bot.api.sendMessage(
+      chatId,
+      '🚗 **Samarbek, TECH BRIDGE ga yo\'lga chiqish vaqti bo\'ldi!**\n\nSoat 14:00 da dars boshlanadi (borishga 40 daqiqa yo\'l).\nNarsalaringizni oling, yo\'lingiz bexatar bo\'lsin! 🚀',
+      { parse_mode: 'Markdown' }
+    );
   } catch (e) {
-    console.error('13:30 school cron error:', e.message);
+    console.error('13:20 TECH BRIDGE cron error:', e.message);
+  }
+}, { timezone: 'Asia/Tashkent' });
+
+// Dushanba, Chorshanba, Juma — 17:30 da: Zamin o'quv markazida bolalarga dars
+cron.schedule('30 17 * * 1,3,5', async () => {
+  const chatId = getChatId();
+  if (!chatId) return;
+  try {
+    await bot.api.sendMessage(
+      chatId,
+      '👨‍🏫 **Zamin o\'quv markazidagi darsingiz yaqinlashmoqda!**\n\nSoat 18:00 dan 19:30 gacha bolalarga dars berish vaqti.\nKuningiz barakali o\'tsin, ustoz! Darsdan so\'ng `/dars` orqali ota-onalarga hisobot tayyorlab beraman.',
+      { parse_mode: 'Markdown' }
+    );
+  } catch (e) {
+    console.error('17:30 Zamin cron error:', e.message);
   }
 }, { timezone: 'Asia/Tashkent' });
 

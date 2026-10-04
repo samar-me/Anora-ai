@@ -1,23 +1,65 @@
 {
   "name": "Samar",
+  "fullName": "Samar Baxtiyorov Suratovich",
   "age": "16",
   "location": "Qashqadaryo viloyati, Yakkabog' tumani, Jeyda qishlog'i",
   "school": "Maktab o'quvchisi",
-  "profession": "Bo'lajak kuchli dasturchi va IT tadbirkor",
+  "profession": "Dasturchi (Full-stack & AI), TECH BRIDGE & Zamin o'quv markazi ustozi",
   "interests": [
-    "Dasturlash (IT)",
-    "Boks / Sport",
-    "Biznes va moliya",
-    "Ingliz tili",
+    "Dasturlash (Node.js, JavaScript, AI, Python)",
+    "Calisthenics (Turnik, anjimaniya, brusya)",
+    "Biznes va moliya (Cadillac Escalade orzusi)",
+    "Ingliz tili (C1 daraja)",
     "Kitob mutolaasi"
   ],
   "strengths": [
-    "Intizom",
-    "Mehnatsevarlik",
-    "Yangi bilimlarga chanqoqlik"
+    "Temir intizom",
+    "Mehnatsevarlik va yetakchilik",
+    "Yangi texnologiyalarga chanqoqlik"
   ],
-  "longTermDream": "Amerikada ta'lim olish hamda milliard dollarlik shaxsiy IT biznes imperiyasini barpo etish",
+  "longTermDream": "Xalqaro darajadagi top Senior muhandis bo'lish, qora Cadillac Escalade, moliyaviy erkinlik va shaxsiy IT imperiya barpo etish",
+  "schedule": {
+    "school": {
+      "days": ["Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"],
+      "startTime": "08:00",
+      "commuteMinutes": 20,
+      "leaveHomeTime": "07:40",
+      "mon_tue_end": "12:05",
+      "mon_tue_home": "12:25",
+      "wed_sat_end": "12:50",
+      "wed_sat_home": "13:10",
+      "sunday": "Maktab yo'q (Dam olish & Deep Work)"
+    },
+    "academies": {
+      "days": ["Dushanba", "Chorshanba", "Juma"],
+      "techBridge": {
+        "name": "TECH BRIDGE Academy",
+        "time": "14:00 - 16:00",
+        "commuteMinutes": 40,
+        "leaveHomeTime": "13:20",
+        "returnTime": "16:40"
+      },
+      "zamin": {
+        "name": "Zamin o'quv markazi (Tech Bridge)",
+        "role": "Bolalarga dars berish (Ustoz)",
+        "time": "18:00 - 19:30"
+      }
+    },
+    "selfDevelopmentDays": {
+      "days": ["Seshanba", "Payshanba", "Shanba"],
+      "focus": "Deep Work (IT, Node.js, LeetCode), Calisthenics, Kitob mutolaasi va Ingliz tili"
+    },
+    "sunday": {
+      "focus": "To'liq strategik audit, haftalik xulosa, oila va dam olish"
+    }
+  },
   "customFacts": [
-    "To'liq ismi: Samar Baxtiyorov Suratovich. Repetitorlik — asosiy kasb emas, maqsadi sari bir bosqich."
+    "To'liq ismi: Samar Baxtiyorov Suratovich.",
+    "Maktabga 07:40 da yo'lga chiqadi, dars 08:00 da.",
+    "Dushanba va Seshanba kunlari maktab 12:05 da tugaydi, 12:25 da uyda bo'ladi.",
+    "Chorshanba, Payshanba, Juma va Shanba kunlari maktab 12:50 da tugaydi, 13:10 da uyda bo'ladi.",
+    "Dushanba, Chorshanba va Juma kunlari soat 14:00 dan 16:00 gacha TECH BRIDGE akademiyasida o'qiydi (borishga 40 min, qaytishga 40 min, uydan 13:20 da chiqadi).",
+    "Dushanba, Chorshanba va Juma kunlari soat 18:00 dan 19:30 gacha Zamin o'quv markazida bolalarga dars beradi (Ustoz).",
+    "Seshanba, Payshanba va Shanba kunlari maktabdan keyin to'liq shaxsiy o'sish: IT Deep Work, LeetCode, Calisthenics va kitob mutolaasi."
   ]
 }
