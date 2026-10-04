@@ -988,6 +988,54 @@ bot.on('message:video', async (ctx) => {
   }
 });
 
+// Document / Book PDF Handler (Interactive Reading Mentor)
+bot.on('message:document', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const doc = ctx.message.document;
+  const fileName = doc.file_name || 'Hujjat.pdf';
+  const isPdf = fileName.toLowerCase().endsWith('.pdf') || doc.mime_type === 'application/pdf';
+
+  if (!isPdf) {
+    await ctx.reply(`📄 «${fileName}» hujjati qabul qilindi.`);
+    return;
+  }
+
+  await ctx.replyWithChatAction('typing');
+  try {
+    const cleanTitle = fileName.replace(/\.[^/.]+$/, '').replace(/[_.-]+/g, ' ').trim();
+
+    // Check size limit for direct bot processing (20MB)
+    let pdfBuffer = null;
+    if (doc.file_size <= 20 * 1024 * 1024) {
+      const file = await ctx.api.getFile(doc.file_id);
+      const fileUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
+      const res = await fetch(fileUrl);
+      const arrayBuffer = await res.arrayBuffer();
+      pdfBuffer = Buffer.from(arrayBuffer);
+    }
+
+    // Register into reading library
+    books.updateReadingProgress({
+      bookTitle: cleanTitle,
+      currentPage: 0,
+    });
+
+    userStates[ctx.chat.id] = {
+      step: 'waiting_reading_page',
+      bookTitle: cleanTitle,
+      pdfBuffer,
+    };
+
+    await ctx.reply(
+      `📖 **«${cleanTitle}»** kitobi muvaffaqiyatli qabul qilindi va shaxsiy kutubxonangizga saqlandi, Samar! 🎯\n\n_Hozir ushbu kitobning nechanchi sahifasigacha (betigacha) o'qib keldingiz?_\n\nMasalan: «7-betgacha o'qidim» yoki shunchaki «7» deb yozing. Men o'sha betgacha bo'lgan mavzulardan sizga chuqur, mantiqiy savollar beraman!`,
+      { parse_mode: 'Markdown' }
+    );
+  } catch (err) {
+    console.error('Document error:', err);
+    await ctx.reply(`Kitobni qabul qilishda xatolik: ${err.message}`);
+  }
+});
+
 // Voice & Audio message handler
 bot.on(['message:voice', 'message:audio'], async (ctx) => {
   saveChatId(ctx.chat.id);
@@ -1014,6 +1062,22 @@ bot.on(['message:voice', 'message:audio'], async (ctx) => {
         const enVoice = await tts.textToVoice(replyText, 'en');
         if (enVoice) await ctx.replyWithVoice(enVoice);
       } catch (_) {}
+      return;
+    }
+
+    // If answering book quiz via voice
+    if (userStates[ctx.chat.id]?.step === 'waiting_book_quiz_answer') {
+      const state = userStates[ctx.chat.id];
+      const { replyText: voiceAnswer } = await ai.processUserMessage(
+        ctx.from.id,
+        "Ushbu ovozli xabarda Samar kitob savoliga javob bermoqda. Samar aytgan javob mazmunini qisqa matn qilib chiqarib ber.",
+        audioBuffer,
+        null,
+        bot
+      );
+      const feedback = await books.evaluateBookAnswer(state.bookTitle, state.page, state.question, voiceAnswer);
+      delete userStates[ctx.chat.id];
+      await ctx.reply(feedback, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
       return;
     }
 
@@ -1070,6 +1134,74 @@ bot.on('message:text', async (ctx) => {
     await ctx.reply(`✍️ Qayd etildi: "${text}". Darslar tugagach, uyga sog'-omon yetib oling!`, {
       reply_markup: mainKeyboard,
     });
+    return;
+  }
+
+  // 1.1. Check if user is answering reading page question
+  if (userStates[ctx.chat.id]?.step === 'waiting_reading_page') {
+    const state = userStates[ctx.chat.id];
+    let pageNum = 1;
+    const numMatch = text.match(/\d+/);
+    if (numMatch) {
+      pageNum = parseInt(numMatch[0], 10);
+    } else {
+      const words = {
+        'bir': 1, 'birinchi': 1,
+        'ikki': 2, 'ikkinchi': 2,
+        'uch': 3, 'uchinchi': 3,
+        'to\'rt': 4, 'to‘rt': 4, 'tort': 4, 'to\'rtinchi': 4,
+        'besh': 5, 'beshinchi': 5,
+        'olti': 6, 'oltinchi': 6,
+        'yetti': 7, 'yettinchi': 7,
+        'sakkiz': 8, 'sakkizinchi': 8,
+        'to\'qqiz': 9, 'to‘qqiz': 9, 'toqqiz': 9, 'to\'qqizinchi': 9,
+        'o\'n': 10, 'o‘n': 10, 'on': 10, 'o\'ninchi': 10,
+        'o\'n besh': 15, 'yigirma': 20, 'o\'ttiz': 30, 'ellik': 50
+      };
+      for (const [w, val] of Object.entries(words)) {
+        if (lower.includes(w)) {
+          pageNum = val;
+          break;
+        }
+      }
+    }
+
+    await ctx.reply(`🧠 **«${state.bookTitle}»** kitobining ${pageNum}-betigacha bo'lgan qismi tahlil qilinmoqda va siz uchun savol tayyorlanmoqda... ⏳`);
+    await ctx.replyWithChatAction('typing');
+
+    books.updateReadingProgress({
+      bookTitle: state.bookTitle,
+      currentPage: pageNum,
+    });
+
+    try {
+      const quizQuestion = await books.generateBookPageQuiz(state.bookTitle, pageNum, state.pdfBuffer);
+      userStates[ctx.chat.id] = {
+        step: 'waiting_book_quiz_answer',
+        bookTitle: state.bookTitle,
+        page: pageNum,
+        question: quizQuestion,
+      };
+      await ctx.reply(quizQuestion, { parse_mode: 'Markdown' });
+    } catch (err) {
+      await ctx.reply(`Savol tuzishda xatolik: ${err.message}`);
+      delete userStates[ctx.chat.id];
+    }
+    return;
+  }
+
+  // 1.2. Check if user is answering the book quiz question
+  if (userStates[ctx.chat.id]?.step === 'waiting_book_quiz_answer') {
+    const state = userStates[ctx.chat.id];
+    await ctx.replyWithChatAction('typing');
+    try {
+      const feedback = await books.evaluateBookAnswer(state.bookTitle, state.page, state.question, text);
+      delete userStates[ctx.chat.id];
+      await ctx.reply(feedback, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    } catch (err) {
+      await ctx.reply(`Javobni tahlil qilishda xatolik: ${err.message}`);
+      delete userStates[ctx.chat.id];
+    }
     return;
   }
 
