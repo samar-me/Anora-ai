@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const PROJECTS_DIR = path.join(__dirname, '..', '..', 'Obsidian_Vault', 'Projects');
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
+const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash-lite', 'gemini-1.5-flash'];
 
 function cleanFilename(str) {
   return str

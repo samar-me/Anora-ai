@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const QUIZ_FILE = path.join(__dirname, '..', '..', 'Obsidian_Vault', 'CRM', 'Dars_Testlari.md');
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
+const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash-lite', 'gemini-1.5-flash'];
 
 async function generateClassroomQuiz(topic) {
   const prompt = `Sen — Samar (TECH BRIDGE Academy va Zamin o'quv markazining 16 yoshli iqtidorli ustozi)ning Shaxsiy Metodisti va Test Generatorisan.
