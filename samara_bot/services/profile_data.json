@@ -24,10 +24,10 @@
       "startTime": "08:00",
       "commuteMinutes": 20,
       "leaveHomeTime": "07:40",
-      "mon_tue_end": "12:05",
-      "mon_tue_home": "12:25",
-      "wed_sat_end": "12:50",
-      "wed_sat_home": "13:10",
+      "mon_tue_end": "12:50",
+      "mon_tue_home": "13:10",
+      "wed_sat_end": "12:05",
+      "wed_sat_home": "12:25",
       "sunday": "Maktab yo'q (Dam olish & Deep Work)"
     },
     "academies": {
@@ -55,10 +55,10 @@
   },
   "customFacts": [
     "To'liq ismi: Samar Baxtiyorov Suratovich.",
-    "Maktabga 07:40 da yo'lga chiqadi, dars 08:00 da.",
-    "Dushanba va Seshanba kunlari maktab 12:05 da tugaydi, 12:25 da uyda bo'ladi.",
-    "Chorshanba, Payshanba, Juma va Shanba kunlari maktab 12:50 da tugaydi, 13:10 da uyda bo'ladi.",
-    "Dushanba, Chorshanba va Juma kunlari soat 14:00 dan 16:00 gacha TECH BRIDGE akademiyasida o'qiydi (borishga 40 min, qaytishga 40 min, uydan 13:20 da chiqadi).",
+    "Maktabga 07:40 da yo'lga chiqadi, dars 08:00 da boshlanadi.",
+    "Dushanba va Seshanba kunlari maktab 12:50 da tugaydi, 13:10 da uyda bo'ladi.",
+    "Chorshanba, Payshanba, Juma va Shanba kunlari maktab 12:05 da tugaydi, 12:25 da uyda bo'ladi.",
+    "Dushanba, Chorshanba va Juma kunlari soat 14:00 dan 16:00 gacha TECH BRIDGE akademiyasida dars (uydan 13:20 da chiqadi, 40 min yo'l).",
     "Dushanba, Chorshanba va Juma kunlari soat 18:00 dan 19:30 gacha Zamin o'quv markazida bolalarga dars beradi (Ustoz).",
     "Seshanba, Payshanba va Shanba kunlari maktabdan keyin to'liq shaxsiy o'sish: IT Deep Work, LeetCode, Calisthenics va kitob mutolaasi."
   ]

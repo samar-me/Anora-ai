@@ -21,21 +21,8 @@ async function generateMorningBriefing() {
   const dayName = DAYS_UZ[dayIndex];
   const isSunday = dayIndex === 0;
   const isAcademyDay = dayIndex === 1 || dayIndex === 3 || dayIndex === 5; // Dush, Chor, Juma
-  const isEarlySchool = dayIndex === 1 || dayIndex === 2; // Dush, Sesh 12:05 da tugaydi
-
-  // 1. Fetch weather in Yakkabog'
-  let weatherText = 'Yakkabog‘da havo musaffo';
-  try {
-    const w = await weather.getWeather();
-    if (w && w.temp) {
-      weatherText = `Yakkabog‘da havo ${w.temp} daraja, ${w.desc || 'ochiq'}`;
-    }
-  } catch (_) {}
-
-  // 2. School & Academies exact schedule
-  let scheduleNote = '';
-  let speechSchedule = '';
-  const schoolEndTime = isEarlySchool ? '12:05' : '12:50';
+  const isLongSchool = dayIndex === 1 || dayIndex === 2; // Dush, Sesh 12:50 da tugaydi
+  const schoolEndTime = isLongSchool ? '12:50' : '12:05'; // Chor, Pay, Juma, Shanba 12:05 da tugaydi
 
   if (isSunday) {
     scheduleNote = "Bugun yakshanba — maktab yo'q! Haftalik strategik audit, chuqur loyihalar va oila kuni.";

@@ -9,8 +9,8 @@ Joylashuv: **Qashqadaryo viloyati, Yakkabog' tumani, Jeyda qishlog'i**
 - **07:40** — Uydan maktabga yo'lga chiqish (20 daqiqa yo'l).
 - **08:00** — Maktab darslari boshlanishi.
 - **Dars tugash vaqtlari:**
-  - 🔹 **Dushanba & Seshanba:** Soat **12:05** da dars tugaydi. Soat **12:25** da uyga yetib keladi.
-  - 🔹 **Chorshanba, Payshanba, Juma, Shanba:** Soat **12:50** da dars tugaydi. Soat **13:10** da uyga yetib keladi.
+  - 🔹 **Dushanba & Seshanba:** Soat **12:50** da dars tugaydi. Soat **13:10** da uyga yetib keladi.
+  - 🔹 **Chorshanba, Payshanba, Juma, Shanba:** Soat **12:05** da dars tugaydi. Soat **12:25** da uyga yetib keladi.
 - 🔹 **Yakshanba:** Maktab yo'q (Dam olish kuni).
 
 ---
@@ -31,7 +31,7 @@ Joylashuv: **Qashqadaryo viloyati, Yakkabog' tumani, Jeyda qishlog'i**
 ---
 
 ## 💻 3. SHAXSIY RIVOJLANISH KUNLARI (Seshanba, Payshanba, Shanba):
-- **12:25 / 13:10** — Maktabdan qaytish va to'yimli tushlik.
+- **13:10 (Sesh) / 12:25 (Pay, Shan)** — Maktabdan qaytish va to'yimli tushlik.
 - **14:00 - 16:30** — **Deep Work Sprint:** IT dasturlash (Node.js, full-stack, yangi loyihalar).
 - **16:30 - 17:30** — **Calisthenics & Sport:** Turnik, anjimaniya, brusya mashqlari.
 - **18:00 - 19:30** — **FAANG Algoritmlari (LeetCode) & Ingliz tili C1**.

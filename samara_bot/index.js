@@ -81,10 +81,10 @@ const mainKeyboard = new Keyboard()
 function getTimeBlockingSchedule() {
   const d = new Date();
   const day = d.getDay(); // 0 = Yak, 1 = Dush, ...
-  const isEarlySchool = day === 1 || day === 2; // Dush, Sesh 12:05
+  const isLongSchool = day === 1 || day === 2; // Dush, Sesh 12:50 da tugaydi
   const isAcademyDay = day === 1 || day === 3 || day === 5; // Dush, Chor, Juma
-  const schoolEndTime = isEarlySchool ? '12:05' : '12:50';
-  const homeTime = isEarlySchool ? '12:25' : '13:10';
+  const schoolEndTime = isLongSchool ? '12:50' : '12:05'; // Chor, Pay, Juma, Shanba 12:05 da tugaydi
+  const homeTime = isLongSchool ? '13:10' : '12:25';
 
   if (day === 0) {
     return `⏱️ **Bugungi Time-Blocking (Yakshanba — Strategik Reja):**
@@ -1124,26 +1124,8 @@ cron.schedule('0 14 * * *', async () => {
 }, { timezone: 'Asia/Tashkent' });
 
 // Maktab rejimi check-in:
-// Dushanba va Seshanba kunlari soat 12:05 da
-cron.schedule('5 12 * * 1,2', async () => {
-  const chatId = getChatId();
-  if (!chatId) return;
-  try {
-    const kb = new InlineKeyboard()
-      .text('✅ Ha, chiqdim', 'school_yes')
-      .text('❌ Yo\'q, maktabdaman', 'school_no');
-
-    await bot.api.sendMessage(chatId, '🏫 **Maktab darslari tugadi (12:05)! Chiqdingizmi?**\n_Uyga 20 daqiqada yetib oling!_', {
-      parse_mode: 'Markdown',
-      reply_markup: kb,
-    });
-  } catch (e) {
-    console.error('12:05 school cron error:', e.message);
-  }
-}, { timezone: 'Asia/Tashkent' });
-
-// Chorshanba - Shanba kunlari soat 12:50 da
-cron.schedule('50 12 * * 3,4,5,6', async () => {
+// Dushanba va Seshanba kunlari soat 12:50 da
+cron.schedule('50 12 * * 1,2', async () => {
   const chatId = getChatId();
   if (!chatId) return;
   try {
@@ -1157,6 +1139,24 @@ cron.schedule('50 12 * * 3,4,5,6', async () => {
     });
   } catch (e) {
     console.error('12:50 school cron error:', e.message);
+  }
+}, { timezone: 'Asia/Tashkent' });
+
+// Chorshanba - Shanba kunlari soat 12:05 da
+cron.schedule('5 12 * * 3,4,5,6', async () => {
+  const chatId = getChatId();
+  if (!chatId) return;
+  try {
+    const kb = new InlineKeyboard()
+      .text('✅ Ha, chiqdim', 'school_yes')
+      .text('❌ Yo\'q, maktabdaman', 'school_no');
+
+    await bot.api.sendMessage(chatId, '🏫 **Maktab darslari tugadi (12:05)! Chiqdingizmi?**\n_Uyga 20 daqiqada yetib oling!_', {
+      parse_mode: 'Markdown',
+      reply_markup: kb,
+    });
+  } catch (e) {
+    console.error('12:05 school cron error:', e.message);
   }
 }, { timezone: 'Asia/Tashkent' });
 

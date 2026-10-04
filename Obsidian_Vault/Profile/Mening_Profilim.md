@@ -17,8 +17,8 @@ Joylashuv: **Qashqadaryo viloyati, Yakkabog' tumani, Jeyda qishlog'i**
 ## 📅 Kun Tartibi va Mashg'ulotlar:
 - **Maktab:** 
   - Har kuni soat 08:00 da boshlanadi (07:40 da yo'lga chiqiladi, 20 daqiqa yo'l).
-  - Dushanba, Seshanba: 12:05 da tugaydi (12:25 da uyda).
-  - Chorshanba, Payshanba, Juma, Shanba: 12:50 da tugaydi (13:10 da uyda).
+  - Dushanba, Seshanba: 12:50 da tugaydi (13:10 da uyda).
+  - Chorshanba, Payshanba, Juma, Shanba: 12:05 da tugaydi (12:25 da uyda).
   - Yakshanba: Dam olish kuni.
 - **O'quv markazlari (Dushanba, Chorshanba, Juma):**
   - **TECH BRIDGE Academy:** 14:00 - 16:00 (borish 40 min, qaytish 40 min).
