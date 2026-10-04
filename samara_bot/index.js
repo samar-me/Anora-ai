@@ -22,6 +22,10 @@ const coder = require('./services/coder');
 const backup = require('./services/backup');
 const fitness = require('./services/fitness');
 const strategy = require('./services/strategy');
+const water = require('./services/water');
+const dream = require('./services/dream');
+const incubator = require('./services/incubator');
+const briefing = require('./services/briefing');
 
 require('dotenv').config();
 
@@ -93,14 +97,16 @@ Men **Anora AI** — shaxsiy yordamchingiz va murabbiyingizman. 🌸
 
 Menga oddiy so'zlashuv tilida yozing:
 • *«15 ming tushlikka»* (xarajat)
-• *«Sport qildim»* (zanjir)
+• *«Sport qildim»* (calisthenics zanjiri & PR)
+• *«Suv ichdim»* (💧 suv balansi)
+• *«Yangi g'oya: ...»* (💡 startap inkubatori)
+• *«Escalade fondi»* (🚗 orzu jamg'armasi)
+• *«Brifing»* (🎙 tongi audio brifing)
 • *«Ali menga 100 ming qarz berishi kerak»* (qarz)
-• *«Yangi o'quvchi: Jasur, 14 yosh, Dush-Chor-Juma 16:00, 300 ming»* (CRM)
+• *«Yangi o'quvchi: Jasur, 14 yosh...»* (CRM)
 • *«20 daqiqadan keyin choynakni eslat»* (taymer)
-• *YouTube yoki maqola havolasi* (3 ta amaliy xulosa)
-• *Rasm yoki video* (umrbod xotira)
 
-Quyidagi tugmalardan ham foydalanishingiz mumkin: 👇`;
+Buyruqlar: /brifing, /suv, /orzu, /goya, /sport, /english, /ovoz`;
 
   await ctx.reply(welcome, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
 });
@@ -298,6 +304,84 @@ bot.callbackQuery(/^set_voice_(.+)$/, async (ctx) => {
       const voice = await tts.textToVoice(sampleText, 'uz', voiceId);
       if (voice) await ctx.replyWithVoice(voice);
     } catch (_) {}
+  }
+});
+
+// /brifing or /tong command (Morning Audio Briefing)
+bot.command(['brifing', 'tong'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  await ctx.reply('🌅 **Ertalabki Ovozli Brifing tayyorlanmoqda...**');
+  try {
+    const br = await briefing.generateMorningBriefing();
+    await ctx.reply(br.text, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    if (br.voiceBuffer) {
+      await ctx.replyWithVoice(new InputFile(br.voiceBuffer));
+    }
+  } catch (err) {
+    await ctx.reply(`Brifingda xatolik: ${err.message}`);
+  }
+});
+
+// /suv command (Water & Hydration Tracker)
+bot.command('suv', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const kb = new InlineKeyboard()
+    .text('+1 stakan (250 ml) 💧', 'water_add_1')
+    .text('+2 stakan (500 ml) 💧💧', 'water_add_2');
+  await ctx.reply(water.getWaterSummary(), { parse_mode: 'Markdown', reply_markup: kb });
+});
+
+bot.callbackQuery(/^water_add_(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery({ text: 'Suv qayd etildi! 💧' });
+  const count = parseInt(ctx.match[1], 10) || 1;
+  water.addWater(count);
+  const kb = new InlineKeyboard()
+    .text('+1 stakan (250 ml) 💧', 'water_add_1')
+    .text('+2 stakan (500 ml) 💧💧', 'water_add_2');
+  let msg = `✅ **${count} stakan toza suv ichildi!**\n\n${water.getWaterSummary()}`;
+  await ctx.editMessageText(msg, { parse_mode: 'Markdown', reply_markup: kb });
+});
+
+// /escalade or /orzu command (Cadillac Escalade Dream Fund)
+bot.command(['escalade', 'orzu'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const kb = new InlineKeyboard()
+    .text('+50 000 so\'m 🚗', 'dream_add_50000')
+    .text('+100 000 so\'m 🚗', 'dream_add_100000')
+    .row()
+    .text('+300 000 so\'m 🚗', 'dream_add_300000')
+    .text('+500 000 so\'m 🚗', 'dream_add_500000');
+  await ctx.reply(dream.getDreamSummary(), { parse_mode: 'Markdown', reply_markup: kb });
+});
+
+bot.callbackQuery(/^dream_add_(\d+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery({ text: 'Orzu fondiga qo\'shildi! 🚗' });
+  const amount = parseInt(ctx.match[1], 10);
+  dream.contribute(amount, 'Tezkor tugma orqali');
+  let msg = `✅ **Cadillac Escalade fondiga +${dream.formatMoney(amount)} qo'shildi!** 🚗\n\n${dream.getDreamSummary()}`;
+  await ctx.editMessageText(msg, { parse_mode: 'Markdown' });
+});
+
+// /goya command (Startup & Idea Incubator)
+bot.command(['goya', 'startap'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const ideaText = ctx.message.text.replace(/^\/(goya|startap)\s*/i, '').trim();
+  if (!ideaText) {
+    await ctx.reply(
+      `💡 **STARTAP VA G'OYALAR INKUBATORI**\n\nMenga yangi g'oyangizni yozing:\nMasalan: \`/goya Maktab o'quvchilari uchun sun'iy intellektli repetitor boti\`\n\nYoki shunchaki «Anora, yangi g'oya keldi: ...» deb yozing!\n\n${incubator.getIdeasSummary()}`,
+      { parse_mode: 'Markdown', reply_markup: mainKeyboard }
+    );
+    return;
+  }
+
+  await ctx.reply('💡 **G\'oya professional tahlil qilinmoqda va Obsidian Ideas bo\'limiga kiritilmoqda...**');
+  try {
+    const res = await incubator.analyzeAndSaveIdea(ideaText);
+    await ctx.reply(`🎉 **G'oya qabul qilindi va Obsidian'ga saqlandi!**\n📄 \`${res.fileName}\`\n\n${res.analysisText}`, {
+      reply_markup: mainKeyboard,
+    });
+  } catch (err) {
+    await ctx.reply(`G'oyani tahlil qilishda xatolik: ${err.message}`);
   }
 });
 
@@ -697,7 +781,65 @@ bot.on('message:text', async (ctx) => {
     return;
   }
 
-  // 13. General text message & AI processing
+  // 13. Suv nazorati ("suv", "suv ichdim")
+  if (lower === 'suv' || lower === '💧' || lower.includes('suv ichdim') || lower.includes('stakan suv')) {
+    let glasses = 1;
+    if (lower.includes('2') || lower.includes('ikki')) glasses = 2;
+    else if (lower.includes('3') || lower.includes('uch')) glasses = 3;
+    water.addWater(glasses);
+    const kb = new InlineKeyboard()
+      .text('+1 stakan (250 ml) 💧', 'water_add_1')
+      .text('+2 stakan (500 ml) 💧💧', 'water_add_2');
+    let msg = `✅ **${glasses} stakan toza suv ichildi!**\n\n${water.getWaterSummary()}`;
+    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: kb });
+    return;
+  }
+
+  // 14. Escalade Orzu fondi ("escalade", "orzu fondi")
+  if (lower === 'escalade' || lower === 'orzu' || lower === 'escalade fondi' || lower === 'katta orzu' || lower === 'orzu fondi') {
+    const kb = new InlineKeyboard()
+      .text('+50 000 so\'m 🚗', 'dream_add_50000')
+      .text('+100 000 so\'m 🚗', 'dream_add_100000')
+      .row()
+      .text('+300 000 so\'m 🚗', 'dream_add_300000')
+      .text('+500 000 so\'m 🚗', 'dream_add_500000');
+    await ctx.reply(dream.getDreamSummary(), { parse_mode: 'Markdown', reply_markup: kb });
+    return;
+  }
+
+  // 15. Tongi brifing ("brifing", "tongi brifing")
+  if (lower === 'brifing' || lower === 'tongi brifing' || lower === 'ertalabki brifing' || lower === 'audio brifing') {
+    await ctx.reply('🌅 **Ertalabki Ovozli Brifing tayyorlanmoqda...**');
+    try {
+      const br = await briefing.generateMorningBriefing();
+      await ctx.reply(br.text, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+      if (br.voiceBuffer) {
+        await ctx.replyWithVoice(new InputFile(br.voiceBuffer));
+      }
+    } catch (err) {
+      await ctx.reply(`Brifingda xatolik: ${err.message}`);
+    }
+    return;
+  }
+
+  // 16. Startap va G'oyalar Inkubatori ("yangi goya:", "startap goyasi:")
+  if (lower.startsWith('yangi g\'oya:') || lower.startsWith('yangi goya:') || lower.startsWith('startap g\'oyasi:') || lower.startsWith('startap goyasi:') || lower.startsWith('menga yangi g\'oya keldi:')) {
+    const ideaClean = text.replace(/^(yangi g['’`]?oya:|startap g['’`]?oyasi:|menga yangi g['’`]?oya keldi:)\s*/i, '').trim();
+    if (ideaClean) {
+      await ctx.reply('💡 **G\'oya professional tahlil qilinmoqda va Obsidian Ideas bo\'limiga saqlanmoqda...**');
+      try {
+        const res = await incubator.analyzeAndSaveIdea(ideaClean);
+        await ctx.reply(`🎉 **G'oya qabul qilindi va Obsidian'ga saqlandi!**\n📄 \`${res.fileName}\`\n\n${res.analysisText}`, {
+          reply_markup: mainKeyboard,
+        });
+      } catch (err) {
+        await ctx.reply(`G'oyani tahlil qilishda xatolik: ${err.message}`);
+      }
+      return;
+    }
+  }
+
+  // 17. General text message & AI processing
   await ctx.replyWithChatAction('typing');
   try {
     const { replyText, foundMediaPath } = await ai.processUserMessage(
@@ -738,17 +880,39 @@ bot.catch((err) => {
 
 // ── Avtomatik Eslatmalar (Vaqtlar - Asia/Tashkent) ─────
 
-// 06:00 - Tongi Sport, Ob-havo & Kun Boshlanishi
+// 06:00 - Tongi 45 soniyalik Ovozli Brifing (Madina ovozida)
 cron.schedule('0 6 * * *', async () => {
   const chatId = getChatId();
   if (!chatId) return;
   try {
-    const w = await weather.getWeather();
-    const weatherTxt = w ? `${w.summary}\n` : '';
-    const msg = `🌅 **Xayrli tong, Samar!**\n\n${weatherTxt}💧 1 stakan toza suv iching.\n💪 **10 ta turnik va 20 ta anjimaniya vaqti!**\nBajarib bo'lgach, "sport qildim" deb yozing.`;
-    await bot.api.sendMessage(chatId, msg, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    const br = await briefing.generateMorningBriefing();
+    await bot.api.sendMessage(chatId, br.text, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    if (br.voiceBuffer) {
+      await bot.api.sendVoice(chatId, new InputFile(br.voiceBuffer));
+    }
   } catch (e) {
-    console.error('06:00 cron error:', e.message);
+    console.error('06:00 morning audio briefing error:', e.message);
+  }
+}, { timezone: 'Asia/Tashkent' });
+
+// 10:30 & 16:30 - Suv va Tetiklik Eslatmasi
+cron.schedule('30 10,16 * * *', async () => {
+  const chatId = getChatId();
+  if (!chatId) return;
+  try {
+    const wData = water.loadData();
+    if (wData.glasses < water.DAILY_TARGET_GLASSES) {
+      const kb = new InlineKeyboard()
+        .text('+1 stakan (250 ml) 💧', 'water_add_1')
+        .text('+2 stakan (500 ml) 💧💧', 'water_add_2');
+      await bot.api.sendMessage(
+        chatId,
+        `💧 **Samarbek, bir stakan toza suv ichish vaqti!**\n\nMiyangiz to'liq quvvatda ishlashi uchun tanani namlab oling.\nJoriy holat: ${wData.glasses}/${water.DAILY_TARGET_GLASSES} stakan.`,
+        { parse_mode: 'Markdown', reply_markup: kb }
+      );
+    }
+  } catch (e) {
+    console.error('Water reminder cron error:', e.message);
   }
 }, { timezone: 'Asia/Tashkent' });
 

@@ -12,6 +12,10 @@ const timer = require('./timer');
 const backup = require('./backup');
 const fitness = require('./fitness');
 const strategy = require('./strategy');
+const dream = require('./dream');
+const water = require('./water');
+const incubator = require('./incubator');
+const briefing = require('./briefing');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -317,6 +321,63 @@ const tools = [
           properties: {},
         },
       },
+      {
+        name: 'add_water',
+        description: 'Ichilgan suvni qayd qilish (stakan soni). Samar "suv ichdim", "1 stakan suv" deganda chaqiriladi.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            glasses: { type: Type.NUMBER, description: 'Ichilgan stakan soni (standart: 1)' },
+          },
+        },
+      },
+      {
+        name: 'get_water_status',
+        description: 'Kunlik suv balansi va tetiklik holatini ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'add_dream_contribution',
+        description: 'Cadillac Escalade Katta Orzu fondiga jamg\'arma qo\'shish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            amount: { type: Type.NUMBER, description: 'Qo\'shilayotgan summa (so\'mda)' },
+            note: { type: Type.STRING, description: 'Izoh' },
+          },
+          required: ['amount'],
+        },
+      },
+      {
+        name: 'get_dream_status',
+        description: 'Cadillac Escalade Katta Orzu fondi holati, progress bar va to\'plangan summani ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'analyze_startup_idea',
+        description: 'Samarning yangi IT dastur yoki startap g\'oyasini professional tahlil qilish (muammo, MVP, stack, monetizatsiya) va Obsidian Ideas bo\'limiga saqlash.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            idea: { type: Type.STRING, description: 'Startap yoki dastur g\'oyasi' },
+          },
+          required: ['idea'],
+        },
+      },
+      {
+        name: 'get_morning_briefing',
+        description: 'Ertalabki 45 soniyalik ob-havo, maktab, dars va sport bo\'yicha brifingni olish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
     ],
   },
 ];
@@ -390,6 +451,18 @@ ${profSummary}
 4. Samar bilan o'zingni robot deb emas, tirik jonday, uning orzulari (Cadillac Escalade, xalqaro dasturchilik, katta daromad)ga o'zingniki kabi chin yurakdan ishonadigan yetakchi deb tut!
 5. Samar kitob o'qiganini aytsa — kitobni qayd qil va o'qilgan bo'limdan 1 ta qiziqarli savol ber.
 6. Samar savolga javob bersa — tahlil qilib, baholab rag'batlantir.
+
+## 💡 STARTAP VA G'OYALAR INKUBATORI:
+- Samar yangi dastur, startap yoki loyiha g'oyasini aytganda — darhol 'analyze_startup_idea' chaqir!
+
+## 🚗 CADILLAC ESCALADE ORZU FONDI:
+- Samar pul jamg'arishi, daromaddan ajratish yoki orzu fondini so'raganda — 'add_dream_contribution' yoki 'get_dream_status' chaqir!
+
+## 💧 SUV VA TETIKLIK:
+- Samar "suv ichdim", "1 stakan suv" deb yozsa — darhol 'add_water' chaqir!
+
+## 🌅 BRİFİNG:
+- Tongi reja, ob-havo va darslar haqida so'rasa — 'get_morning_briefing' chaqir!
 `;
 }
 
@@ -438,7 +511,11 @@ async function executeTool(name, args, context = {}) {
           description: args.description || 'Daromad',
         });
         await supabase.syncTransaction({ type: 'income', amount: args.amount, category: 'daromad', description: args.description });
-        return { success: true, message: `${obsidian.formatMoney(args.amount)} daromad yozildi.` };
+        const alloc = dream.suggestAllocation(args.amount);
+        return {
+          success: true,
+          message: `${obsidian.formatMoney(args.amount)} daromad yozildi. 🚗 Maslahat: Ushbu puldan ${alloc.percent}% (${alloc.formatted}) Cadillac Escalade orzu fondiga ajratilsinmi?`,
+        };
       }
 
       case 'add_debt': {
@@ -493,7 +570,11 @@ async function executeTool(name, args, context = {}) {
             category: 'o\'quvchilar',
             description: `${s.name} oylik to'lovi`,
           });
-          return { success: true, message: `💰 ${s.name} to'lovi (${obsidian.formatMoney(s.monthlyFee)}) qabul qilindi va daromadga qo'shildi!` };
+          const alloc = dream.suggestAllocation(s.monthlyFee);
+          return {
+            success: true,
+            message: `💰 ${s.name} to'lovi (${obsidian.formatMoney(s.monthlyFee)}) qabul qilindi va daromadga qo'shildi! 🚗 Maslahat: Ushbu to'lovdan ${alloc.percent}% (${alloc.formatted}) Cadillac Escalade fondiga ajratilsinmi?`,
+          };
         }
         return { success: false, message: `O'quvchi topilmadi.` };
       }
@@ -604,6 +685,44 @@ async function executeTool(name, args, context = {}) {
 
       case 'get_strategy': {
         return { success: true, strategy: strategy.getStrategySummary() };
+      }
+
+      case 'add_water': {
+        const res = water.addWater(args.glasses || 1);
+        let msg = `💧 ${args.glasses || 1} stakan suv ichildi! Kunlik: ${res.glasses}/${res.targetGlasses} stakan (${res.totalMl}/${res.targetMl} ml) — ${res.percent}%.`;
+        if (res.completedNow) {
+          msg += ` 🎉 Bugungi 2 litr me'yor 100% bajarildi! Tetiklik a'lo darajada!`;
+        }
+        return { success: true, message: msg };
+      }
+
+      case 'get_water_status': {
+        return { success: true, summary: water.getWaterSummary() };
+      }
+
+      case 'add_dream_contribution': {
+        const res = dream.contribute(args.amount, args.note || 'Jamg\'arma');
+        return {
+          success: true,
+          message: `🚗 Cadillac Escalade fondiga ${dream.formatMoney(res.added)} qo'shildi! Jami to'plangan: ${dream.formatMoney(res.totalSavedUzs)} (~$${res.totalSavedUsd.toLocaleString()}) [${res.bar}] ${res.percent}%. Qadam-baqadam orzuga yaqinlashyapmiz!`,
+        };
+      }
+
+      case 'get_dream_status': {
+        return { success: true, summary: dream.getDreamSummary() };
+      }
+
+      case 'analyze_startup_idea': {
+        const res = await incubator.analyzeAndSaveIdea(args.idea);
+        return {
+          success: true,
+          message: `💡 "${res.title}" g'oyasi tahlil qilindi va Obsidian Ideas bo'limiga saqlandi!\n\n${res.analysisText}`,
+        };
+      }
+
+      case 'get_morning_briefing': {
+        const res = await briefing.generateMorningBriefing();
+        return { success: true, briefing: res.text };
       }
 
       default:
