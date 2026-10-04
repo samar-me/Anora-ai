@@ -1,0 +1,42 @@
+{
+  "personalRecords": {
+    "turnik": {
+      "name": "Turnik (Pull-ups)",
+      "value": 15,
+      "unit": "ta",
+      "date": "2026-10-01"
+    },
+    "anjimaniya": {
+      "name": "Anjimaniya (Push-ups)",
+      "value": 30,
+      "unit": "ta",
+      "date": "2026-10-01"
+    },
+    "brusya": {
+      "name": "Brusya (Dips)",
+      "value": 15,
+      "unit": "ta",
+      "date": "2026-10-01"
+    },
+    "squats": {
+      "name": "Prisidaniya (Squats)",
+      "value": 40,
+      "unit": "ta",
+      "date": "2026-10-01"
+    },
+    "yugurish": {
+      "name": "Yugurish",
+      "value": 3,
+      "unit": "km",
+      "date": "2026-10-01"
+    }
+  },
+  "workouts": [
+    {
+      "date": "2026-10-03",
+      "timestamp": "2026-10-04T02:46:11.366Z",
+      "description": "Mashq qildim",
+      "summary": "Muvaffaqiyatli yakunlandi 💪"
+    }
+  ]
+}

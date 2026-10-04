@@ -11,6 +11,7 @@ const books = require('./books');
 const timer = require('./timer');
 const backup = require('./backup');
 const fitness = require('./fitness');
+const strategy = require('./strategy');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -308,6 +309,14 @@ const tools = [
           properties: {},
         },
       },
+      {
+        name: 'get_strategy',
+        description: 'Samarning to\'liq shaxsiy rivojlanish strategiyasi (Ingliz tili A2->C1, Senior dasturchilik, Sport, Moliya) va bugungi strategik nishonni ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
     ],
   },
 ];
@@ -319,6 +328,7 @@ function buildSystemPrompt() {
   const profSummary = profile.getProfileSummary();
   const activeBook = books.getActiveBook();
   const bookInfo = activeBook ? `Hozir o'qilayotgan kitob: "${activeBook.title}" (${activeBook.currentPage}-betda)` : 'Hozircha faol kitob kiritilmagan';
+  const todayMission = strategy.getTodayMission();
 
   return `Sen Samara AI — Samar ning shaxsiy murabbiyi, sun'iy intellekt yordamchisi va sadoqatli do'stisan.
 Sana: ${today}
@@ -328,6 +338,18 @@ Hozirgi vaqt (Toshkent vaqti): ${tashkentTime}
 ${profSummary}
 📍 Kelib chiqishi: Qashqadaryo viloyati, Yakkabog' tumani (Jeyda qishlog'i).
 📚 ${bookInfo}
+
+## 👑 STRATEGIK YETAKCHILIK VA PROAKTIV MURABBIY (ENG MUHIM):
+1. SEN FAQAT SAVOL BERIB KUTADIGAN PASSIV BOT EMASSAN! Samar: «u faqat so'ramasin, u menga to'liq rivojlanish strategiyasini qo'ysin, ingliz tilida ham» deb talab qo'ydi!
+2. Sen Samarning Strategik Boshqaruvchisisan:
+   - 🇬🇧 Ingliz tili (A2 -> C1): Har kungi dars, yangi texnik so'zlar va gapirish vazifasini o'zing qo'yasan!
+   - 💻 Dasturlash: Senior muhandislik sari loyihalar, algoritm va clean code intizomini yo'naltirasan!
+   - 🏋️‍♂️ Sport: Aniq kunlik jismoniy yuklama va shaxsiy rekordlarni buzishni talab qilasan!
+3. 🎯 BUGUNGI FAOL STRATEGIK NISHON (${todayMission.topic}):
+   - 🇬🇧 Ingliz tili: ${todayMission.english}
+   - 💻 Dasturlash: ${todayMission.coding}
+   - 🏋️‍♂️ Sport: ${todayMission.sport}
+4. Samarga aniq qadam-baqadam vazifalar yukla, o'sish strategiyasini o'zing boshqar va uni katta g'alabalar sari yetakla!
 
 ## 🗣️ TIL VA SHEVA BILAN ISHLASH (ENG MUHIM):
 1. Samar Qashqadaryo jonli so'zlashuv tilida, shevada, qisqartirib, tez yozganda imlo xatolari yoki harflar tushib qolishi bilan gapiradi:
@@ -575,6 +597,10 @@ async function executeTool(name, args, context = {}) {
 
       case 'get_fitness_stats': {
         return { success: true, stats: fitness.getFitnessSummary() };
+      }
+
+      case 'get_strategy': {
+        return { success: true, strategy: strategy.getStrategySummary() };
       }
 
       default:

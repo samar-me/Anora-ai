@@ -21,6 +21,7 @@ const english = require('./services/english');
 const coder = require('./services/coder');
 const backup = require('./services/backup');
 const fitness = require('./services/fitness');
+const strategy = require('./services/strategy');
 
 require('dotenv').config();
 
@@ -211,14 +212,31 @@ bot.command(['backup', 'zaxira'], async (ctx) => {
   }
 });
 
-// /english command (Speaking & Vocabulary Coach)
+// /strategiya command (Master Development Roadmap)
+bot.command(['strategiya', 'roadmap'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const s = strategy.getStrategySummary();
+  await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// /english command (Strategic Speaking & Vocabulary Coach)
 bot.command(['english', 'ingliz'], async (ctx) => {
   saveChatId(ctx.chat.id);
   english.startEnglishMode(ctx.from.id);
-  const msg = `🇬🇧 **English Speaking & Vocabulary Coach activated!** 🎙️\n\nHello Samar! Tell me about your day, your goals, or your coding projects in English.\n\n*(Mashg'ulotni tugatish uchun "stop" yoki "chiqish" deb yozing)*`;
+  const mission = english.getDailyEnglishMission();
+
+  let msg = `🇬🇧 **ENGLISH ACCELERATOR: TODAY'S STRATEGIC MISSION** 🚀\n\n`;
+  msg += `📌 **Mavzu:** *${mission.topic}*\n\n`;
+  msg += `🔑 **Bugungi o'zlashtiriladigan so'zlar:**\n`;
+  for (const w of mission.words) {
+    msg += `• **${w.word}** — ${w.meaning}\n  *(Misol: ${w.ex})*\n`;
+  }
+  msg += `\n🎯 **Bugungi Challenge / Topshiriq:**\n"${mission.challenge}"\n\n`;
+  msg += `*(Ushbu savolga inglizcha ovozli yoki matnli javob bering. Chiqish uchun: "stop" yoki "chiqish")*`;
+
   await ctx.reply(msg, { parse_mode: 'Markdown' });
   try {
-    const voice = await tts.textToVoice("Hello Samar! I'm ready. Let's practice English!", 'en');
+    const voice = await tts.textToVoice(`Hello Samar! Today's mission is ${mission.topic}. ${mission.challenge}`, 'en');
     if (voice) await ctx.replyWithVoice(voice);
   } catch (_) {}
 });
@@ -464,6 +482,13 @@ bot.on('message:text', async (ctx) => {
     } catch (err) {
       await ctx.reply(`Audit tayyorlashda xatolik: ${err.message}`);
     }
+    return;
+  }
+
+  // Strategiya / Roadmap
+  if (lower === 'strategiya' || lower === 'roadmap' || lower === 'strategiyam' || lower === 'rivojlanish rejasi') {
+    const s = strategy.getStrategySummary();
+    await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
     return;
   }
 
@@ -723,13 +748,26 @@ cron.schedule('30 13 * * 3,4,5,6', async () => {
   }
 }, { timezone: 'Asia/Tashkent' });
 
-// 19:30 - Daily 5-min English Boost
+// 19:30 - Daily Strategic English Accelerator
 cron.schedule('30 19 * * *', async () => {
   const chatId = getChatId();
   if (!chatId) return;
   try {
-    const msg = `🇬🇧 **Hey Samar! 5-Minute English Boost Time!** 🎙️\n\nHow was your day? Tell me in English about one thing you did or learned today!\n\n*(Inglizcha ovozli yoki matnli javob berishingiz mumkin)*`;
+    const mission = english.getDailyEnglishMission();
+    let msg = `🇬🇧 **KUNLIK INGLIZ TILI STRATEGIK MISSIYASI** 🚀\n\n`;
+    msg += `📌 **Mavzu:** *${mission.topic}*\n\n`;
+    msg += `🔑 **Bugungi o'zlashtiriladigan 3 ta so'z:**\n`;
+    for (const w of mission.words) {
+      msg += `• **${w.word}** — ${w.meaning}\n`;
+    }
+    msg += `\n🎯 **Bugungi Challenge / Topshiriq:**\n"${mission.challenge}"\n\n`;
+    msg += `*(Ovozli yoki matnli javob bering, darhol tahlil qilib audio yuboraman!)*`;
+
     await bot.api.sendMessage(chatId, msg, { parse_mode: 'Markdown' });
+    try {
+      const voice = await tts.textToVoice(`Hello Samar! Here is today's challenge: ${mission.challenge}`, 'en');
+      if (voice) await bot.api.sendVoice(chatId, voice);
+    } catch (_) {}
   } catch (e) {
     console.error('19:30 english cron error:', e.message);
   }

@@ -1,0 +1,18 @@
+{
+  "sport": {
+    "count": 1,
+    "lastDate": "2026-10-03"
+  },
+  "reading": {
+    "count": 0,
+    "lastDate": null
+  },
+  "english": {
+    "count": 0,
+    "lastDate": null
+  },
+  "deepwork": {
+    "count": 0,
+    "lastDate": null
+  }
+}
