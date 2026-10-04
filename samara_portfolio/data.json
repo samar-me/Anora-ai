@@ -1,0 +1,63 @@
+{
+  "name": "Samar",
+  "fullName": "Samar Baxtiyorov",
+  "tagline": "16 yoshli Full-Stack Dasturchi, AI Muhandis & O'quv Markazi Ustozi",
+  "location": "Qashqadaryo, O'zbekiston",
+  "bio": "Men 16 yoshli dasturchi va repetitorman. Murakkab tizimlar, Telegram botlar, AI yordamchilari yaratishga va yoshlarga dasturlashni o'rgatishga ishtiyoqmandman. Maqsadim: Xalqaro darajadagi top muhandis bo'lish va dunyoni o'zgartiruvchi texnologiyalar yaratish.",
+  "socials": {
+    "telegram": "https://t.me/samara_my_ai_bot",
+    "github": "https://github.com",
+    "instagram": "https://instagram.com"
+  },
+  "stats": {
+    "leetcodeSolved": "50+",
+    "pullUpsPR": "15+",
+    "pushUpsPR": "30+",
+    "studentsTaught": "20+",
+    "englishLevel": "C1 (Target)"
+  },
+  "skills": [
+    "JavaScript / ES6+",
+    "Node.js & Express",
+    "Google Gemini AI API",
+    "Python",
+    "PostgreSQL & Supabase",
+    "Telegram Bot Architecture",
+    "Git & GitHub",
+    "TailwindCSS"
+  ],
+  "experience": [
+    {
+      "role": "Dasturlash Ustozi",
+      "company": "TECH BRIDGE Academy & Zamin O'quv Markazi",
+      "period": "2026 - Hozirgacha",
+      "desc": "O'quvchilarga dasturlash asoslari, veb-texnologiyalar va sun'iy intellekt vositalarini o'rgatish."
+    },
+    {
+      "role": "AI Arxitektori & Asoschi",
+      "company": "Anora AI (Second Brain Ecosystem)",
+      "period": "2026",
+      "desc": "Shaxsiy hayot, sport, moliya va dasturlashni boshqaruvchi shaxsiy AI operatsion tizimini ishlab chiqish."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Anora AI — Shaxsiy Murabbiy & Second Brain",
+      "desc": "Google Gemini 3.8 Flash, Node.js va Telegram Bot asosida qurilgan to'liq shaxsiy intellekt tizimi.",
+      "tags": ["Node.js", "AI", "Telegram", "Obsidian"],
+      "link": "https://t.me/samara_my_ai_bot"
+    },
+    {
+      "title": "Solo Leveling RPG Life Engine",
+      "desc": "Real hayotiy intizomni o'yinga aylantiruvchi, XP va darajalarni hisoblovchi geymifikatsiya moduli.",
+      "tags": ["Gamification", "Node.js", "Habits"],
+      "link": "#"
+    },
+    {
+      "title": "FAANG LeetCode Arena & Algoritmik Duelchi",
+      "desc": "Kunlik Google va Meta intervyu algoritmlarini tahlil qiluvchi va Big-O murakkabligini tekshiruvchi modul.",
+      "tags": ["DSA", "Big-O", "AI Evaluation"],
+      "link": "#"
+    }
+  ]
+}

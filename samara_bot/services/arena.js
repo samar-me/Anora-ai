@@ -92,7 +92,7 @@ function getDailyProblem() {
 
 async function evaluateSolution(codeText, problemTitle = 'LeetCode Masalasi') {
   const prompt = `Sen — Google va Meta (FAANG) kompaniyasining Staff Software Engineeri va LeetCode bo'yicha murabbiyisan.
-Samarbek ismli 16 yoshli iqtidorli o'zbek dasturchisi quyidagi kod yechimini topshirdi.
+Samar ismli 16 yoshli iqtidorli o'zbek dasturchisi quyidagi kod yechimini topshirdi.
 Masala: "${problemTitle}"
 
 Samarning kodi:

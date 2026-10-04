@@ -34,6 +34,12 @@ const architect = require('./services/architect');
 const publisher = require('./services/publisher');
 const vaultRag = require('./services/vault_rag');
 const nightshift = require('./services/nightshift');
+const portfolioSync = require('./services/portfolio_sync');
+const resume = require('./services/resume');
+const quizGen = require('./services/quiz_gen');
+const githubSync = require('./services/github_sync');
+const telegramUser = require('./services/telegram_user');
+const instagramMgr = require('./services/instagram_mgr');
 
 require('dotenv').config();
 
@@ -549,6 +555,127 @@ bot.command(['tungi', 'nightshift'], async (ctx) => {
     });
   } catch (err) {
     await ctx.reply(`Tungi tahlilda xatolik: ${err.message}`);
+  }
+});
+
+// /portfolio or /sayt command (Dynamic Developer Portfolio & Live Sync)
+bot.command(['portfolio', 'sayt'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  await ctx.reply('🌐 **Shaxsiy portfoliyo yangilanmoqda va ma\'lumotlar sinxronlanmoqda...**');
+  try {
+    await portfolioSync.syncPortfolio();
+    const summary = portfolioSync.getPortfolioSummary();
+    await ctx.reply(summary, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`Portfoliyo yangilashda xatolik: ${err.message}`);
+  }
+});
+
+// /cv or /rezyume command (Harvard & Silicon Valley 1-Page CV Generator)
+bot.command(['cv', 'rezyume'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  await ctx.reply('📄 **Xalqaro standartdagi 1 sahifalik Harvard/Silicon Valley CV tayyorlanmoqda...**');
+  try {
+    const res = await resume.generateHarvardResume();
+    await ctx.reply(res.resumeText, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`CV tayyorlashda xatolik: ${err.message}`);
+  }
+});
+
+// /test command (Interactive Coding Quiz & Question Generator for Tech Bridge & Zamin)
+bot.command('test', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const topic = ctx.message.text.replace(/^\/test\s*/i, '').trim();
+  if (!topic) {
+    await ctx.reply(
+      `📝 **O'QUV MARKAZI UCHUN TEZKOR TEST GENERATORI**\n\nFoydalanish: \`/test <mavzu>\`\n\nMisol:\n\`/test JavaScript massiv metodlari (map, filter, reduce)\` yoki\n\`/test Python funksiyalar va ro'yxatlar\``,
+      { parse_mode: 'Markdown', reply_markup: mainKeyboard }
+    );
+    return;
+  }
+
+  await ctx.reply(`📝 **"${topic}" mavzusida 5 ta amaliy test va tushuntirishlar tuzilmoqda...**`);
+  try {
+    const res = await quizGen.generateClassroomQuiz(topic);
+    await ctx.reply(res.quizText, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`Test tuzishda xatolik: ${err.message}`);
+  }
+});
+
+// /git command (GitHub Auto-Commit & Green Streak Sync)
+bot.command(['git', 'github'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  await ctx.reply('🟢 **GitHub avto-commit va yashil profil sinxronizatsiyasi boshlandi...**');
+  try {
+    const res = await githubSync.autoCommitAndSync('manual streak update via Anora');
+    await ctx.reply(res.message, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`GitHub sinxronizatsiyasida xatolik: ${err.message}`);
+  }
+});
+
+// /tg and /tg_dars commands (Telegram Userbot Status & Classroom Busy Mode)
+bot.command('tg', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const summary = telegramUser.getTelegramManagerSummary();
+  await ctx.reply(summary, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+bot.command('tg_dars', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const arg = ctx.message.text.replace(/^\/tg_dars\s*/i, '').trim().toLowerCase();
+  let enabled = null;
+  if (arg === 'on' || arg === 'yoq' || arg === 'ha') enabled = true;
+  if (arg === 'off' || arg === 'o\'chir' || arg === 'yoq_emas') enabled = false;
+  
+  const res = telegramUser.toggleBusyMode(enabled);
+  await ctx.reply(
+    `🤖 **Telegram Avto-javob rejimi:** ${res.busyMode ? '✅ FAOL (Dars/Maktab xabari yoqildi)' : '⏸️ O\'CHIRILDI'}\n\n${res.currentSchedule.message}`,
+    { parse_mode: 'Markdown', reply_markup: mainKeyboard }
+  );
+});
+
+// /reels command (Instagram Viral Reels Script Generator)
+bot.command('reels', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const topic = ctx.message.text.replace(/^\/reels\s*/i, '').trim();
+  if (!topic) {
+    await ctx.reply(
+      `🎬 **INSTAGRAM VIRAL REELS SENARIY GENERATORI**\n\nFoydalanish: \`/reels <mavzu>\`\n\nMisol:\n\`/reels 16 yoshda qanday qilib junior dasturchi bo'lish va o'quvchilarga dars berish mumkin?\``,
+      { parse_mode: 'Markdown', reply_markup: mainKeyboard }
+    );
+    return;
+  }
+
+  await ctx.reply(`🎬 **"${topic}" mavzusida virusli Reels senariysi tayyorlanmoqda...**`);
+  try {
+    const res = await instagramMgr.generateReelsScript(topic);
+    await ctx.reply(res.scriptText, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`Reels senariysini tayyorlashda xatolik: ${err.message}`);
+  }
+});
+
+// /karusel command (Instagram Carousel / Karusel Post Generator)
+bot.command('karusel', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const topic = ctx.message.text.replace(/^\/karusel\s*/i, '').trim();
+  if (!topic) {
+    await ctx.reply(
+      `📸 **INSTAGRAM PROFESSIONAL KARUSEL GENERATORI**\n\nFoydalanish: \`/karusel <mavzu>\`\n\nMisol:\n\`/karusel Har bir dasturchi bilishi shart bo'lgan 5 ta Git buyrug'i\``,
+      { parse_mode: 'Markdown', reply_markup: mainKeyboard }
+    );
+    return;
+  }
+
+  await ctx.reply(`📸 **"${topic}" mavzusida slaydli karusel tayyorlanmoqda...**`);
+  try {
+    const res = await instagramMgr.generateCarouselPost(topic);
+    await ctx.reply(res.carouselText, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+  } catch (err) {
+    await ctx.reply(`Karusel tayyorlashda xatolik: ${err.message}`);
   }
 });
 
@@ -1095,7 +1222,7 @@ cron.schedule('30 10,16 * * *', async () => {
         .text('+2 stakan (500 ml) 💧💧', 'water_add_2');
       await bot.api.sendMessage(
         chatId,
-        `💧 **Samarbek, bir stakan toza suv ichish vaqti!**\n\nMiyangiz to'liq quvvatda ishlashi uchun tanani namlab oling.\nJoriy holat: ${wData.glasses}/${water.DAILY_TARGET_GLASSES} stakan.`,
+        `💧 **Samar, bir stakan toza suv ichish vaqti!**\n\nMiyangiz to'liq quvvatda ishlashi uchun tanani namlab oling.\nJoriy holat: ${wData.glasses}/${water.DAILY_TARGET_GLASSES} stakan.`,
         { parse_mode: 'Markdown', reply_markup: kb }
       );
     }
@@ -1167,7 +1294,7 @@ cron.schedule('20 13 * * 1,3,5', async () => {
   try {
     await bot.api.sendMessage(
       chatId,
-      '🚗 **Samarbek, TECH BRIDGE ga yo\'lga chiqish vaqti bo\'ldi!**\n\nSoat 14:00 da dars boshlanadi (borishga 40 daqiqa yo\'l).\nNarsalaringizni oling, yo\'lingiz bexatar bo\'lsin! 🚀',
+      '🚗 **Samar, TECH BRIDGE ga yo\'lga chiqish vaqti bo\'ldi!**\n\nSoat 14:00 da dars boshlanadi (borishga 40 daqiqa yo\'l).\nNarsalaringizni oling, yo\'lingiz bexatar bo\'lsin! 🚀',
       { parse_mode: 'Markdown' }
     );
   } catch (e) {
@@ -1242,14 +1369,20 @@ cron.schedule('30 21 * * *', async () => {
   }
 }, { timezone: 'Asia/Tashkent' });
 
-// 23:00 - Har kecha avtomatik Obsidian Cloud Backup
+// 23:00 - Har kecha avtomatik Obsidian Cloud Backup va GitHub Yashil Streak Sync
 cron.schedule('0 23 * * *', async () => {
   const chatId = getChatId();
   if (!chatId) return;
   try {
     await backup.sendBackupToTelegram(bot, chatId);
+    // Avtomatik GitHub Yashil Streak va Portfoliyo sinxronizatsiyasi
+    const gitRes = await githubSync.autoCommitAndSync('automated daily midnight streak sync');
+    if (gitRes.committed) {
+      await bot.api.sendMessage(chatId, `🟢 **GitHub Yashil Streak yangilandi:**\n\`${gitRes.commitMessage}\``, { parse_mode: 'Markdown' });
+    }
+    await portfolioSync.syncPortfolio();
   } catch (e) {
-    console.error('23:00 backup cron error:', e.message);
+    console.error('23:00 backup/github cron error:', e.message);
   }
 }, { timezone: 'Asia/Tashkent' });
 

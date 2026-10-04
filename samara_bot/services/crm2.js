@@ -9,7 +9,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
 
 async function generateParentReports(lessonNotes) {
-  const prompt = `Sen — Samarbek (16 yoshli iqtidorli repetitor va dasturchi ustoz)ning shaxsiy yordamchisisan.
+  const prompt = `Sen — Samar (16 yoshli iqtidorli repetitor va dasturchi ustoz)ning shaxsiy yordamchisisan.
 Samar bugungi o'tgan darsi haqida quyidagi xomaki qisqa qaydlarini yozdi:
 "${lessonNotes}"
 
@@ -22,7 +22,7 @@ Har bir o'quvchi uchun alohida nusxalab olishga qulay blok ajrat:
 👤 O'quvchi: [Ismi]
 📱 Ota-onaga xabar (nusxalab yuborish uchun):
 "Assalomu alaykum, hurmatli ota-ona!
-Men Samarbek ustozman. Bugungi darsimiz bo'yicha farzandingiz [Ismi]ning qisqa hisoboti:
+Men Samar ustozman. Bugungi darsimiz bo'yicha farzandingiz [Ismi]ning qisqa hisoboti:
 [Bajarilgan ishlar, mavzuni o'zlashtirishi, intizomi va amaliy maslahat].
 Baho / Natija: ...
 Kelgusi darsimiz: ...

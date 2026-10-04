@@ -40,10 +40,10 @@ async function generateMorningBriefing() {
   const fitnessGoal = "10-15 ta turnik va 25 ta anjimaniya bilan qon aylanishini kuchaytiramiz.";
 
   // 4. TTS audio script
-  const audioScript = `Xayrli tong, Samarbek! Bugun ${dayName}. ${weatherText}. Bugungi jadvalimiz: ${speechSchedule} Sportda: ${fitnessGoal} 07:40 da maktabga yo‘lga chiqamiz. O‘rningizdan tetik turing, bir stakan toza suv iching. Qora Cadillac Escalade va moliyaviy erkinlik sari yana bir g‘alabali kun boshlandi. Kuningiz barakali o‘tsin, chempion!`;
+  const audioScript = `Xayrli tong, Samar! Bugun ${dayName}. ${weatherText}. Bugungi jadvalimiz: ${speechSchedule} Sportda: ${fitnessGoal} 07:40 da maktabga yo‘lga chiqamiz. O‘rningizdan tetik turing, bir stakan toza suv iching. Qora Cadillac Escalade va moliyaviy erkinlik sari yana bir g‘alabali kun boshlandi. Kuningiz barakali o‘tsin, chempion!`;
 
   // 5. Formatted Markdown text
-  let text = `🌅 **XAYRLI TONG, SAMARBEK! (TONGI BRİFİNG)** 🦁\n\n`;
+  let text = `🌅 **XAYRLI TONG, SAMAR! (TONGI BRİFİNG)** 🦁\n\n`;
   text += `📅 **Bugun:** ${dayName}\n`;
   text += `🌤 **Ob-havo:** ${weatherText}\n\n`;
   text += `🎯 **Bugungi aniq jadval va nishonlar:**\n`;

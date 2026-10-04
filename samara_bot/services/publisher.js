@@ -6,7 +6,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
 
 async function generateTechPost(topicOrInsight) {
-  const prompt = `Sen — 16 yoshli iqtidorli dasturchi va kelajakdagi yirik texnologik lider Samarbekning shaxsiy Tech Influencer va Content Strategisisan.
+  const prompt = `Sen — 16 yoshli iqtidorli dasturchi va kelajakdagi yirik texnologik lider Samarning shaxsiy Tech Influencer va Content Strategisisan.
 Samar bugun o'rgangan bilim yoki erishgan yutug'i haqida shunday dedi:
 "${topicOrInsight}"
 

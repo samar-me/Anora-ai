@@ -24,7 +24,7 @@ function cleanFilename(str) {
 async function analyzeAndSaveIdea(userIdeaText) {
   ensureDir();
 
-  const prompt = `Sen — Anora AI, Samarbek (16 yoshli iqtidorli dasturchi va bo'lajak startap asoschisi)ning Startap Inkubatori va Texnologik Maslahatchisisan.
+  const prompt = `Sen — Anora AI, Samar (16 yoshli iqtidorli dasturchi va bo'lajak startap asoschisi)ning Startap Inkubatori va Texnologik Maslahatchisisan.
 
 Samar senga quyidagi startap yoki loyiha g'oyasini aytdi:
 "${userIdeaText}"

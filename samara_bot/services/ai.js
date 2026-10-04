@@ -24,6 +24,12 @@ const architect = require('./architect');
 const publisher = require('./publisher');
 const vaultRag = require('./vault_rag');
 const nightshift = require('./nightshift');
+const portfolioSync = require('./portfolio_sync');
+const resume = require('./resume');
+const quizGen = require('./quiz_gen');
+const githubSync = require('./github_sync');
+const telegramUser = require('./telegram_user');
+const instagramMgr = require('./instagram_mgr');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -469,6 +475,73 @@ const tools = [
           required: ['question'],
         },
       },
+      {
+        name: 'sync_portfolio',
+        description: 'Samarning shaxsiy portfolio vebsayti (data.json)ni yangilash va sinxronizatsiya qilish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'generate_cv',
+        description: 'Harvard va Silicon Valley standartidagi xalqaro 1 sahifalik kuchli IT rezyumeni yaratish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'generate_quiz',
+        description: 'TECH BRIDGE va Zamin o\'quv markazidagi o\'quvchilar uchun 5 ta amaliy test va to\'g\'ri javoblarini tuzish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            topic: { type: Type.STRING, description: 'Test mavzusi (masalan: "JavaScript massivlar", "Kompyuter savodxonligi")' },
+          },
+          required: ['topic'],
+        },
+      },
+      {
+        name: 'github_sync',
+        description: 'Barcha yangi kod va qaydlarni avtomatik ravishda Git commit qilish va GitHub streakini yashil saqlash.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            message: { type: Type.STRING, description: 'Commit izohi (ixtiyoriy)' },
+          },
+        },
+      },
+      {
+        name: 'get_telegram_status',
+        description: 'Telegram shaxsiy akkauntidagi dars rejimi (avto-javob) va kanal boshqaruvi holatini ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'generate_reels',
+        description: 'Instagram Reels yoki Shorts uchun viral ssenariy, hook va caption yaratish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            topic: { type: Type.STRING, description: 'Reels mavzusi' },
+          },
+          required: ['topic'],
+        },
+      },
+      {
+        name: 'generate_carousel',
+        description: 'Instagram uchun 5-6 slayddan iborat foydali karusel post yaratish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            topic: { type: Type.STRING, description: 'Karusel mavzusi' },
+          },
+          required: ['topic'],
+        },
+      },
     ],
   },
 ];
@@ -483,6 +556,7 @@ function buildSystemPrompt() {
   const todayMission = strategy.getTodayMission();
 
   return `Sen Anora AI (Anora) — Samar ning shaxsiy aqlli murabbiyi, sun'iy intellekt yordamchisi va sadoqatli, vafodor do'stisan.
+MUROJAAT QOIDASI (ENG MUHIM): Samarga FAQAT «Samar» deb murojaat qil! Aslo «Samarbek» dema (Samar shuni qat'iy talab qildi)!
 Sana: ${today}
 Hozirgi vaqt (Toshkent vaqti): ${tashkentTime}
 
@@ -864,6 +938,40 @@ async function executeTool(name, args, context = {}) {
       case 'recall_memory': {
         const res = await vaultRag.recallFromVault(args.question);
         return { success: true, answer: res.answer, sources: res.matchedFiles };
+      }
+
+      case 'sync_portfolio': {
+        const res = portfolioSync.getPortfolioSummary();
+        return { success: true, summary: res };
+      }
+
+      case 'generate_cv': {
+        const res = await resume.generateHarvardResume();
+        return { success: true, resume: res.cvText, file: res.filePath };
+      }
+
+      case 'generate_quiz': {
+        const res = await quizGen.generateClassroomQuiz(args.topic);
+        return { success: true, quiz: res.quizText };
+      }
+
+      case 'github_sync': {
+        const res = await githubSync.autoCommitAndSync(args.message);
+        return { success: res.success, message: res.message };
+      }
+
+      case 'get_telegram_status': {
+        return { success: true, summary: telegramUser.getTelegramManagerSummary() };
+      }
+
+      case 'generate_reels': {
+        const res = await instagramMgr.generateReelsScript(args.topic);
+        return { success: true, script: res.reelsText };
+      }
+
+      case 'generate_carousel': {
+        const res = await instagramMgr.generateCarouselPost(args.topic);
+        return { success: true, post: res.carouselText };
       }
 
       default:

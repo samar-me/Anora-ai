@@ -18,7 +18,7 @@ function cleanFilename(str) {
 
 async function designSystemArchitecture(projectIdeaText) {
   const prompt = `Sen — Google va Netflix darajasidagi Principal Software Architectsan.
-Samarbek ismli 16 yoshli iqtidorli o'zbek dasturchisi sayr qilayotganda quyidagi loyiha arxitekturasi g'oyasini aytib berdi:
+Samar ismli 16 yoshli iqtidorli o'zbek dasturchisi sayr qilayotganda quyidagi loyiha arxitekturasi g'oyasini aytib berdi:
 "${projectIdeaText}"
 
 Ushbu loyiha uchun professional dasturiy tizim arxitekturasini (System Design) ishlab chiq:

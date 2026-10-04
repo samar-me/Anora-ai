@@ -15,7 +15,7 @@ function getRankTitle(level) {
 
 function loadData() {
   const defaultData = {
-    playerName: 'Samarbek',
+    playerName: 'Samar',
     level: 1,
     currentXp: 0,
     totalXp: 0,
@@ -65,7 +65,7 @@ function syncToObsidian(data) {
     const xpNeeded = getXpNeeded(data.level);
     const p = renderProgressBar(data.currentXp, xpNeeded, 15);
 
-    const content = `# 🎮 Solo Leveling — Samarbekning Status Oynasi
+    const content = `# 🎮 Solo Leveling — Samarning Status Oynasi
 
 **O'yinchi:** ${data.playerName}
 **Daraja (Level):** **${data.level}** (${rankInfo.rank}: _${rankInfo.title}_)
@@ -150,7 +150,7 @@ function getStatusCard() {
   const p = renderProgressBar(data.currentXp, xpNeeded, 12);
 
   let text = `🎮 **SOLO LEVELING: STATUS OYNASI** ⚡\n\n`;
-  text += `👤 **O'yinchi:** Samarbek\n`;
+  text += `👤 **O'yinchi:** Samar\n`;
   text += `🏆 **Rutba:** [${rankInfo.rank}] _${rankInfo.title}_\n`;
   text += `⭐ **Daraja (Level):** **${data.level}**\n`;
   text += `📈 **XP:** [${p.bar}] ${p.percent}% (${data.currentXp} / ${xpNeeded} XP)\n\n`;

@@ -9,7 +9,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
 
 async function runNightShift() {
-  const prompt = `Sen — 16 yoshli iqtidorli dasturchi Samarbekning Tungi Sun'iy Intellekt Avtopilotisan (Autonomous Night Shift Agent).
+  const prompt = `Sen — 16 yoshli iqtidorli dasturchi Samarning Tungi Sun'iy Intellekt Avtopilotisan (Autonomous Night Shift Agent).
 Samar uxlayotgan paytda dunyo texnologiya olamida (Silicon Valley, Node.js, AI, Calisthenics va Dasturchilik) yuz berayotgan eng muhim 3 ta amaliy trendni tahlil qilib, ertalabki stoliga tayyorlab qo'yishing kerak.
 
 Tungi hisobot tuzilishi:

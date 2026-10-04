@@ -51,7 +51,7 @@ async function recallFromVault(userQuestion) {
     contextText += `\n\n--- HUJJAT: ${doc.file} ---\n${doc.content}\n`;
   }
 
-  const prompt = `Sen — Samarbekning shaxsiy Ikkinchi Miyasi (Second Brain AI) va Obsidian xotirasisan.
+  const prompt = `Sen — Samarning shaxsiy Ikkinchi Miyasi (Second Brain AI) va Obsidian xotirasisan.
 Samar sendan o'zining xotirasidagi ma'lumotni so'ramoqda:
 Savol: "${userQuestion}"
 

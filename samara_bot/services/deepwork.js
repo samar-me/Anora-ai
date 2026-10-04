@@ -77,7 +77,7 @@ function logToObsidian(minutes, goal, result) {
     const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
     if (!fs.existsSync(OBSIDIAN_FILE)) {
-      const header = `# ⚡ Deep Work & Kiber-Konsentratsiya Jurnali\n\nUshbu fayl Samarbekning chalg'imasdan kod yozish va chuqur ishlash (Deep Work) mashg'ulotlarini qayd etadi.\n\n---\n\n`;
+      const header = `# ⚡ Deep Work & Kiber-Konsentratsiya Jurnali\n\nUshbu fayl Samarning chalg'imasdan kod yozish va chuqur ishlash (Deep Work) mashg'ulotlarini qayd etadi.\n\n---\n\n`;
       fs.writeFileSync(OBSIDIAN_FILE, header, 'utf8');
     }
 
