@@ -32,6 +32,7 @@ const telegramUser = require('./telegram_user');
 const instagramMgr = require('./instagram_mgr');
 const pdfFinder = require('./pdf_finder');
 const escalation = require('./escalation');
+const events = require('./events');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -568,6 +569,29 @@ const tools = [
           required: ['title'],
         },
       },
+      {
+        name: 'register_critical_event',
+        description: 'O\'ta muhim va qatnashish shart bo\'lgan maxsus tadbir, voqea yoki uchrashuvni qayd qilish (masalan: Qarshi IT Parkdagi tadbir, muhim musobaqa). Maxsus Aniq Vaqt Zanjiri bo\'yicha eslatadi: T-24h (bir kun oldin kechqurun), T-ertalab (tadbir kuni ertalab), T-2h (2 soat qolganda), T-1h (1 soat qolganda Pinned Alert va Ovozli audio chaqiruv).',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING, description: 'Tadbir yoki voqea nomi' },
+            location: { type: Type.STRING, description: 'Joylashuvi (masalan: Qarshi IT Park)' },
+            dateTime: { type: Type.STRING, description: 'Sana va vaqt (ISO yoki YYYY-MM-DD HH:mm)' },
+            dateTimeStr: { type: Type.STRING, description: 'Inson o\'qiydigan chiroyli sana va vaqt (masalan: Yakshanba 10:00)' },
+            notes: { type: Type.STRING, description: 'Qo\'shimcha eslatmalar' },
+          },
+          required: ['title', 'dateTime'],
+        },
+      },
+      {
+        name: 'get_critical_events',
+        description: 'Rejalashtirilgan barcha o\'ta muhim tadbirlar va voqealar ro\'yxatini ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
     ],
   },
 ];
@@ -625,6 +649,10 @@ ${profSummary}
 4. BUDILNIK, ESLATMA VA TAYMERLAR:
    - Samar "22:00 da uxlashni eslat", "18:00 ga budilnik qo'y", "10 minutdan keyin eslat" desa — darhol 'set_reminder' funksiyasini chaqir!
    - Vaqtni Samar aytganidek aniq ko'rsat (masalan: time: "22:00", note: "Uxlash"). O'zingdan boshqa vaqt to'qima!
+
+5. O'TA MUHIM TADBIRLAR VA VOQEALAR (MISSION-CRITICAL EVENTS):
+   - Agar Samar o'zi qatnashishi SHART bo'lgan muhim tadbir, musobaqa yoki uchrashuv haqida aytsa (masalan: "Keyingi yakshanba Qarshi IT Parkda tadbir bor, qatnashishim kerak", "20-oktyabrda muhim imtihon bor") — darhol 'register_critical_event' funksiyasini chaqir!
+   - ODDIY ODATHAR (kitob o'qish, suv ichish, mashq) uchun ASLO eskalatsiya yoki sirena qilinmaydi! Ular erkin, moslashuvchan odatlar. Faqat Qarshi IT Park kabi o'ta muhim voqealar maxsus Aniq Vaqt Zanjiri (T-24h, T-ertalab, T-2h, T-1h Pinned Voice Alert) bilan qattiq nazoratga olinadi!
 
 ## 🛑 CHALKASHMASLIK VA TOZA JAVOB QOIDASI (ZERO-HALLUCINATION):
 1. HECH QACHON o'tmishdagi eski ishlarni (masalan, naushnik, eski narsalarni) Samar o'zi so'ramasa, o'zingdan to'qib gapga suqma!
@@ -1022,6 +1050,27 @@ async function executeTool(name, args, context = {}) {
         return {
           success: true,
           message: `Ko'p bosqichli eslatma yaratildi: "${task.title}". Agar 20 daqiqa ichida tasdiqlanmasa, Pinned Alert va Siren ogohlantirishlari ishga tushadi.`,
+        };
+      }
+
+      case 'register_critical_event': {
+        const ev = events.addCriticalEvent({
+          title: args.title,
+          location: args.location || '',
+          dateTime: args.dateTime,
+          dateTimeStr: args.dateTimeStr || '',
+          notes: args.notes || '',
+        });
+        return {
+          success: true,
+          message: `O'ta muhim tadbir ro'yxatga olindi: "${ev.title}" (${ev.dateTimeStr}). Aniq Vaqt Zanjiri (T-24h bir kun oldin, T-ertalab, T-2h 2 soat oldin, T-1h 1 soat oldin Pinned Alert va Ovozli audio) faollashtirildi!`,
+        };
+      }
+
+      case 'get_critical_events': {
+        return {
+          success: true,
+          summary: events.getEventsSummary(),
         };
       }
 

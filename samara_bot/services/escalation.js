@@ -94,6 +94,9 @@ async function checkAndEscalate(bot) {
 
   for (const task of tasks) {
     if (task.status !== 'pending') continue;
+    // Samar qat'iy talabi: Oddiy odatlar va kundalik vazifalarni aslo pin/sirena qilib bezovta qilmaslik!
+    // Faqat o'ta muhim (critical) vazifalar eskalatsiya qilinadi.
+    if (task.priority !== 'critical') continue;
 
     if (now >= task.nextEscalationAt) {
       if (task.currentLevel === 1) {

@@ -42,6 +42,7 @@ const telegramUser = require('./services/telegram_user');
 const instagramMgr = require('./services/instagram_mgr');
 const pdfFinder = require('./services/pdf_finder');
 const escalation = require('./services/escalation');
+const events = require('./services/events');
 
 require('dotenv').config();
 
@@ -311,6 +312,13 @@ bot.command('test_eskalatsiya', async (ctx) => {
     priority: 'critical',
     category: 'academy',
   });
+});
+
+// /tadbir command (Mission-Critical Events)
+bot.command(['tadbir', 'tadbirlar'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const s = events.getEventsSummary();
+  await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
 });
 
 // /haftalik command (Weekly Strategic Audit)
@@ -906,6 +914,17 @@ bot.callbackQuery(/^esc_shield_(.+)$/, async (ctx) => {
   const taskId = ctx.match[1];
   const res = await escalation.shieldTask(bot, taskId);
   await ctx.editMessageText(res.message, { parse_mode: 'Markdown' });
+});
+
+bot.callbackQuery(/^event_ack_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const eventId = ctx.match[1];
+  const ev = events.acknowledgeEvent(eventId);
+  if (ev) {
+    await ctx.editMessageText(`✅ **«${ev.title}»** tasdiqlandi, Samar! Yo'lingiz bexatar bo'lsin, omad tilayman! 🚀`, { parse_mode: 'Markdown' });
+  } else {
+    await ctx.editMessageText('✅ Tasdiqlandi, Samar!');
+  }
 });
 
 bot.callbackQuery('btn_finance_history', async (ctx) => {
@@ -1742,12 +1761,16 @@ cron.schedule('5 12 * * 3,4,5,6', async () => {
   }
 }, { timezone: 'Asia/Tashkent' });
 
-// Har 1 daqiqada: Ko'p Bosqichli Eskalatsiya Zanjirini tekshirish (Level 2 Pinned & Level 3 Siren)
+// Har 1 daqiqada: Ko'p Bosqichli Eskalatsiya va O'ta Muhim Tadbirlar Zanjirini tekshirish
 cron.schedule('* * * * *', async () => {
   try {
     await escalation.checkAndEscalate(bot);
+    const chatId = getChatId();
+    if (chatId) {
+      await events.checkEventCountdowns(bot, chatId);
+    }
   } catch (e) {
-    console.error('Escalation ticker error:', e.message);
+    console.error('Ticker error:', e.message);
   }
 });
 
