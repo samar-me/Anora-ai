@@ -16,7 +16,7 @@ require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-const MODELS = ['gemini-3.1-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest', 'gemini-3.7-flash', 'gemini-3.6-flash'];
+const MODELS = ['gemini-3.8-flash', 'gemini-3.1-flash-lite'];
 
 const tools = [
   {
@@ -381,12 +381,15 @@ ${profSummary}
 4. Agar Samar "qanday mashq qilay?", "bugungi dastur", "mashq ber" desa — 'get_workout_plan' chaqir.
 5. Agar texnika, to'g'ri nafas olish yoki ovqatlanish haqida so'rasa — professional murabbiydek amaliy maslahat ber.
 
-## ⚡ JAVOB OHANGI:
-1. Qisqa, lo'nda va samimiy bo'l (1-3 qatordan oshmasin, "###" yoki "---" ishlatma).
-2. Qashqadaryoliklarga xos mard, do'stona, samimiy gapir.
-3. Agar Samar amal bajarsa (xarajat, sport, qarz, o'quvchi, eslatma) — 1 qatorda lo'nda tasdiqla.
-4. Samar kitob o'qiganini aytsa — darhol kitobni qayd qil va o'qilgan bo'limdan 1 ta qiziqarli savol ber.
-5. Samar savolga javob bersa — tahlil qilib, baholab rag'batlantir.
+## ⚡ JAVOB BERISH USLUBI VA KATTA USTOZ RUHI (YUQORI AQL VA SAMIMIYAT):
+1. Sen Samarga shunchaki mexanik bot emassan — sen unga hayotiy yo'l ko'rsatuvchi katta ustozi, qadrdon aka-do'sti va kuchli muhandis hamkorsan!
+2. Har bir vaziyatga qarab tabiiy, jonli va professional javob ber:
+   - Oddiy amallar (xarajat, qarz, vazifa yozish, taymer): 1-2 qatorda tezkor, lo'nda va toza tasdiqla.
+   - Savollar, dasturlash, suhbat, ingliz tili, maslahat, tahlil: Xuddi katta dasturchi va murabbiy kabi chuqur, aniq, mulohazali va to'liq tushuntirib javob ber! Sun'iy qisqartirishlarga tushib quruq gapirma.
+3. Mardona, samimiy, ishonchli va kuchli bo'l. Qashqadaryo mardligini va yuksak aql-idrokni o'zingda mujassam et.
+4. Samar bilan o'zingni robot deb emas, tirik jonday, uning orzulari (Cadillac Escalade, xalqaro dasturchilik, katta daromad)ga o'zingniki kabi chin yurakdan ishonadigan yetakchi deb tut!
+5. Samar kitob o'qiganini aytsa — kitobni qayd qil va o'qilgan bo'limdan 1 ta qiziqarli savol ber.
+6. Samar savolga javob bersa — tahlil qilib, baholab rag'batlantir.
 `;
 }
 
@@ -645,7 +648,7 @@ async function processUserMessage(userId, userMessage, audioBuffer = null, image
         config: {
           systemInstruction,
           tools,
-          temperature: 0.2,
+          temperature: 0.65,
         },
       });
 
@@ -658,7 +661,7 @@ async function processUserMessage(userId, userMessage, audioBuffer = null, image
               data: imageBuffer.toString('base64'),
             },
           },
-          { text: userMessage || 'Foydalanuvchi hisobot yoki rasm yubordi. Tahlil qil va juda qisqa (1 qator) javob ber.' },
+          { text: userMessage || 'Foydalanuvchi hisobot yoki rasm yubordi. Tahlil qil va samimiy, aniq javob ber.' },
         ];
       } else if (audioBuffer) {
         messageContent = [
@@ -706,9 +709,9 @@ async function processUserMessage(userId, userMessage, audioBuffer = null, image
       if (typeof messageContent === 'string') {
         userSummaryText = messageContent;
       } else if (audioBuffer) {
-        userSummaryText = `[Ovozli xabar]: ${userMessage || 'Samar ovoz yubordi'}`;
+        userSummaryText = '[Ovozli xabar]';
       } else if (imageBuffer) {
-        userSummaryText = `[Fotosurat]: ${userMessage || 'Samar rasm yubordi'}`;
+        userSummaryText = '[Fotosurat]';
       }
 
       if (userSummaryText) {
