@@ -41,6 +41,7 @@ const githubSync = require('./services/github_sync');
 const telegramUser = require('./services/telegram_user');
 const instagramMgr = require('./services/instagram_mgr');
 const pdfFinder = require('./services/pdf_finder');
+const escalation = require('./services/escalation');
 
 require('dotenv').config();
 
@@ -291,6 +292,25 @@ bot.command(['pdf', 'kitob_pdf'], async (ctx) => {
     console.error('PDF command error:', err);
     await ctx.reply(`PDF qidirishda xatolik: ${err.message}`);
   }
+});
+
+// /qutqaruv command (Nighttime Rescue Dashboard)
+bot.command(['qutqaruv', 'eskalatsiya'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const rescue = escalation.getRescueDashboard();
+  await ctx.reply(rescue.text, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// /test_eskalatsiya command (Immediate Live Test for Samar)
+bot.command('test_eskalatsiya', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  await ctx.reply('🧪 **Ko\'p Bosqichli Eskalatsiya Zanjiri (Multi-Level Escalation) sinovi boshlandi!**\n\n1-bosqich: Quyidagi xabarni tasdiqlamang, 1-2 daqiqadan so\'ng 2-bosqich (Pinned Alert + Madina Ovozli xabari) va 3-bosqich (Siren Alert) ishga tushadi.');
+  await escalation.createEscalationTask(bot, ctx.chat.id, {
+    title: 'TECH BRIDGE darsiga jo\'nash',
+    description: 'Dars soat 14:00 da boshlanadi. 40 daqiqa yo\'l vaqtini unutmang!',
+    priority: 'critical',
+    category: 'academy',
+  });
 });
 
 // /haftalik command (Weekly Strategic Audit)
@@ -857,6 +877,35 @@ bot.callbackQuery('btn_open_escalade', async (ctx) => {
 bot.callbackQuery('btn_open_crm', async (ctx) => {
   await ctx.answerCallbackQuery();
   await ctx.reply(crm.getStudentsSummary(), { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// Multi-Level Escalation Callbacks
+bot.callbackQuery(/^esc_done_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const taskId = ctx.match[1];
+  const res = await escalation.resolveTask(bot, taskId);
+  await ctx.editMessageText(res.message, { parse_mode: 'Markdown' });
+});
+
+bot.callbackQuery(/^esc_snooze_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const taskId = ctx.match[1];
+  const res = await escalation.snoozeTask(bot, taskId, 20);
+  await ctx.editMessageText(res.message, { parse_mode: 'Markdown' });
+});
+
+bot.callbackQuery(/^esc_tomorrow_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const taskId = ctx.match[1];
+  const res = await escalation.rescheduleTask(bot, taskId);
+  await ctx.editMessageText(res.message, { parse_mode: 'Markdown' });
+});
+
+bot.callbackQuery(/^esc_shield_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const taskId = ctx.match[1];
+  const res = await escalation.shieldTask(bot, taskId);
+  await ctx.editMessageText(res.message, { parse_mode: 'Markdown' });
 });
 
 bot.callbackQuery('btn_finance_history', async (ctx) => {
@@ -1693,16 +1742,26 @@ cron.schedule('5 12 * * 3,4,5,6', async () => {
   }
 }, { timezone: 'Asia/Tashkent' });
 
-// Dushanba, Chorshanba, Juma — 13:20 da: TECH BRIDGE ga yo'lga chiqish eslatmasi
+// Har 1 daqiqada: Ko'p Bosqichli Eskalatsiya Zanjirini tekshirish (Level 2 Pinned & Level 3 Siren)
+cron.schedule('* * * * *', async () => {
+  try {
+    await escalation.checkAndEscalate(bot);
+  } catch (e) {
+    console.error('Escalation ticker error:', e.message);
+  }
+});
+
+// Dushanba, Chorshanba, Juma — 13:20 da: TECH BRIDGE ga yo'lga chiqish eslatmasi (Multi-Level Escalation)
 cron.schedule('20 13 * * 1,3,5', async () => {
   const chatId = getChatId();
   if (!chatId) return;
   try {
-    await bot.api.sendMessage(
-      chatId,
-      '🚗 **Samar, TECH BRIDGE ga yo\'lga chiqish vaqti bo\'ldi!**\n\nSoat 14:00 da dars boshlanadi (borishga 40 daqiqa yo\'l).\nNarsalaringizni oling, yo\'lingiz bexatar bo\'lsin! 🚀',
-      { parse_mode: 'Markdown' }
-    );
+    await escalation.createEscalationTask(bot, chatId, {
+      title: 'TECH BRIDGE ga yo\'lga chiqish (13:20)',
+      description: 'Soat 14:00 da dars boshlanadi (borishga 40 daqiqa yo\'l). Kechikmaslik zarur!',
+      priority: 'high',
+      category: 'academy',
+    });
   } catch (e) {
     console.error('13:20 TECH BRIDGE cron error:', e.message);
   }
@@ -1760,6 +1819,20 @@ cron.schedule('0 20 * * 0', async () => {
     });
   } catch (e) {
     console.error('Sunday review cron error:', e.message);
+  }
+}, { timezone: 'Asia/Tashkent' });
+
+// 21:00 - Kechki Qutqaruv va Sarhisob (Nighttime Rescue Mode)
+cron.schedule('0 21 * * *', async () => {
+  const chatId = getChatId();
+  if (!chatId) return;
+  try {
+    const rescue = escalation.getRescueDashboard();
+    if (rescue.hasPending) {
+      await bot.api.sendMessage(chatId, rescue.text, { parse_mode: 'Markdown' });
+    }
+  } catch (e) {
+    console.error('21:00 rescue cron error:', e.message);
   }
 }, { timezone: 'Asia/Tashkent' });
 

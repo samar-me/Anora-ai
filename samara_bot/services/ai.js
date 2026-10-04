@@ -31,6 +31,7 @@ const githubSync = require('./github_sync');
 const telegramUser = require('./telegram_user');
 const instagramMgr = require('./instagram_mgr');
 const pdfFinder = require('./pdf_finder');
+const escalation = require('./escalation');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -554,6 +555,19 @@ const tools = [
           required: ['query'],
         },
       },
+      {
+        name: 'create_escalation_reminder',
+        description: 'Ko\'p bosqichli kuchaytirilgan eslatma (Multi-Level Escalation) yaratish. Samar unutib qo\'ysa yoki javob bermasa, Level 2 (Pinned Voice Alert) va Level 3 (Favqulodda Siren) orqali uyg\'otadi.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING, description: 'Vazifa yoki eslatma sarlavhasi' },
+            description: { type: Type.STRING, description: 'Batafsil ma\'lumot yoki eslatma sababi' },
+            priority: { type: Type.STRING, description: 'Muhimlik darajasi: normal, high yoki critical' },
+          },
+          required: ['title'],
+        },
+      },
     ],
   },
 ];
@@ -997,6 +1011,18 @@ async function executeTool(name, args, context = {}) {
         } else {
           return { success: false, message: res.message };
         }
+      }
+
+      case 'create_escalation_reminder': {
+        const task = await escalation.createEscalationTask(context.botInstance, context.userId, {
+          title: args.title,
+          description: args.description || '',
+          priority: args.priority || 'normal',
+        });
+        return {
+          success: true,
+          message: `Ko'p bosqichli eslatma yaratildi: "${task.title}". Agar 20 daqiqa ichida tasdiqlanmasa, Pinned Alert va Siren ogohlantirishlari ishga tushadi.`,
+        };
       }
 
       default:
