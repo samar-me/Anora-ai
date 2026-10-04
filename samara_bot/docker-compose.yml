@@ -1,0 +1,14 @@
+services:
+  anora-bot:
+    build: .
+    container_name: anora_ai_bot
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ../Obsidian_Vault:/app/Obsidian_Vault
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
