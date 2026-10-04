@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const rpg = require('./rpg');
 
 const DATA_FILE = path.join(__dirname, 'water_data.json');
 const OBSIDIAN_FILE = path.join(__dirname, '..', '..', 'Obsidian_Vault', 'Habits', 'Suv_Balansi.md');
@@ -96,6 +97,7 @@ function addWater(glasses = 1) {
   });
 
   saveData(data);
+  const xpRes = rpg.addXp('discipline', 10 * glasses, `${glasses} stakan toza suv ichildi`);
   return {
     glasses: data.glasses,
     totalMl: data.totalMl,
@@ -104,6 +106,7 @@ function addWater(glasses = 1) {
     percent: Math.min(100, Math.round((data.totalMl / DAILY_TARGET_ML) * 100)),
     completedNow: data.glasses >= DAILY_TARGET_GLASSES,
     streak: data.streak,
+    xpRes,
   };
 }
 

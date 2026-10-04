@@ -26,6 +26,14 @@ const water = require('./services/water');
 const dream = require('./services/dream');
 const incubator = require('./services/incubator');
 const briefing = require('./services/briefing');
+const rpg = require('./services/rpg');
+const arena = require('./services/arena');
+const deepwork = require('./services/deepwork');
+const crm2 = require('./services/crm2');
+const architect = require('./services/architect');
+const publisher = require('./services/publisher');
+const vaultRag = require('./services/vault_rag');
+const nightshift = require('./services/nightshift');
 
 require('dotenv').config();
 
@@ -382,6 +390,135 @@ bot.command(['goya', 'startap'], async (ctx) => {
     });
   } catch (err) {
     await ctx.reply(`G'oyani tahlil qilishda xatolik: ${err.message}`);
+  }
+});
+
+// /rpg or /level command (Solo Leveling RPG Status)
+bot.command(['rpg', 'level'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  await ctx.reply(rpg.getStatusCard(), { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// /arena or /leetcode command (FAANG Algorithm Duel)
+bot.command(['arena', 'leetcode', 'masala'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const p = arena.getDailyProblem();
+  await ctx.reply(p.text, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// /fokus or /deepwork command (Focus & Flow Shield)
+bot.command(['fokus', 'deepwork'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const parts = ctx.message.text.replace(/^\/(fokus|deepwork)\s*/i, '').trim().split(/\s+/);
+  const minutes = parseInt(parts[0], 10) || 45;
+  const goal = parts.slice(1).join(' ') || 'Chuqur dasturlash va kod yozish';
+
+  const res = deepwork.startFocusSession(bot, ctx.chat.id, minutes, goal);
+  let msg = `🎯 **DEEP WORK SPRINTI BOSHLANDI!** 🚀\n\n`;
+  msg += `⏱️ Vaqt: **${res.minutes} daqiqa** (Tugash vaqti: **${res.endTimeStr}**)\n`;
+  msg += `🎯 Maqsad: *${res.goal}*\n\n`;
+  msg += `🛡️ _Flow Shield faollashtirildi. Barcha chalg'ituvchi omillarni chetga suring va diqqatni 100% kodga qarating! Yakunlangach, hisobot olaman va +70 XP beraman._`;
+
+  await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// /dars command (CRM 2.0 Parent Reports)
+bot.command('dars', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const notes = ctx.message.text.replace(/^\/dars\s*/i, '').trim();
+  if (!notes) {
+    await ctx.reply(
+      `👨‍🏫 **REPETITORLIK CRM 2.0: OTA-ONALARGA HISOBOT**\n\nFoydalanish: \`/dars <o'quvchilar va bugungi dars haqida qayd>\`\n\nMisol:\n\`/dars Jasur va Rustam mavzuni a'lo darajada o'zlashtirdi, 100% bajardi. Ali esa kechikib keldi va uy vazifasini chala qildi.\``,
+      { parse_mode: 'Markdown', reply_markup: mainKeyboard }
+    );
+    return;
+  }
+
+  await ctx.reply('👨‍🏫 **Ota-onalar uchun professional hisobotlar tayyorlanmoqda...**');
+  try {
+    const res = await crm2.generateParentReports(notes);
+    await ctx.reply(`📱 **OTA-ONALARGA YUBORISH UCHUN TAYYOR XABARLAR:**\n\n${res.reportsText}\n\n🎮 +50 XP (Aql & Muloqot) qo'shildi!`, {
+      reply_markup: mainKeyboard,
+    });
+  } catch (err) {
+    await ctx.reply(`Hisobot tayyorlashda xatolik: ${err.message}`);
+  }
+});
+
+// /arxitektura command (Voice/Text to System Architecture)
+bot.command(['arxitektura', 'arch'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const idea = ctx.message.text.replace(/^\/(arxitektura|arch)\s*/i, '').trim();
+  if (!idea) {
+    await ctx.reply(
+      `📐 **SAYR QILUVCHI ARXITEKTOR (SYSTEM DESIGN)**\n\nFoydalanish: \`/arxitektura <loyiha g'oyasi>\`\n\nMisol:\n\`/arxitektura O'quvchilar test ishlaydigan SaaS, unda Telegram bot, PostgreSQL bazasi, Node.js va Supabase bo'ladi.\``,
+      { parse_mode: 'Markdown', reply_markup: mainKeyboard }
+    );
+    return;
+  }
+
+  await ctx.reply('📐 **Tizim arxitekturasi va Mermaid diagrammasi ishlab chiqilmoqda...**');
+  try {
+    const res = await architect.designSystemArchitecture(idea);
+    await ctx.reply(`🎉 **Arxitektura tayyor va saqlandi!** (\`${res.fileName}\`)\n\n${res.archDoc}\n\n🎮 +80 XP (Muhandislik 💻) qo'shildi!`, {
+      reply_markup: mainKeyboard,
+    });
+  } catch (err) {
+    await ctx.reply(`Arxitektura tuzishda xatolik: ${err.message}`);
+  }
+});
+
+// /post command (Tech Influencer Post Generator)
+bot.command(['post', 'maqola'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const topic = ctx.message.text.replace(/^\/(post|maqola)\s*/i, '').trim();
+  if (!topic) {
+    await ctx.reply('📢 Foydalanish: `/post <mavzu yoki o\'rganilgan bilim>`\nMisol: `/post Bugun Node.js da cluster va worker threadslar haqida o\'rgandim`', { parse_mode: 'Markdown' });
+    return;
+  }
+
+  await ctx.reply('📢 **Kanal va LinkedIn uchun texnik post tayyorlanmoqda...**');
+  try {
+    const res = await publisher.generateTechPost(topic);
+    await ctx.reply(`📱 **KANAL YOKI LINKEDIN UCHUN POST:**\n\n${res.postText}\n\n🎮 +40 XP qo'shildi!`, {
+      reply_markup: mainKeyboard,
+    });
+  } catch (err) {
+    await ctx.reply(`Post tayyorlashda xatolik: ${err.message}`);
+  }
+});
+
+// /esla command (Semantic Memory Recall)
+bot.command(['esla', 'recall'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const query = ctx.message.text.replace(/^\/(esla|recall)\s*/i, '').trim();
+  if (!query) {
+    await ctx.reply('🧠 Foydalanish: `/esla <savol yoki eslash kerak bo\'lgan narsa>`\nMisol: `/esla o\'quvchilarimning to\'lovlari haqida nima bor?`', { parse_mode: 'Markdown' });
+    return;
+  }
+
+  await ctx.reply('🧠 **Obsidian xotiradan qidirilmoqda...**');
+  try {
+    const res = await vaultRag.recallFromVault(query);
+    await ctx.reply(`🧠 **IKKINCHI MIYA XULOSASI:**\n\n${res.answer}`, {
+      reply_markup: mainKeyboard,
+    });
+  } catch (err) {
+    await ctx.reply(`Xotirani o'qishda xatolik: ${err.message}`);
+  }
+});
+
+// /tungi command (Run night shift on demand)
+bot.command(['tungi', 'nightshift'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  await ctx.reply('🌙 **Tungi Avtopilot tahlili ishga tushirildi...**');
+  try {
+    const res = await nightshift.runNightShift();
+    await ctx.reply(`${res.reportText}\n\n🎮 +50 XP (Muhandislik 💻) qo'shildi!`, {
+      reply_markup: mainKeyboard,
+    });
+  } catch (err) {
+    await ctx.reply(`Tungi tahlilda xatolik: ${err.message}`);
   }
 });
 
@@ -1032,6 +1169,18 @@ cron.schedule('0 23 * * *', async () => {
     await backup.sendBackupToTelegram(bot, chatId);
   } catch (e) {
     console.error('23:00 backup cron error:', e.message);
+  }
+}, { timezone: 'Asia/Tashkent' });
+
+// 03:00 - Tungi Avtopilot (Autonomous Night Shift Intelligence)
+cron.schedule('0 3 * * *', async () => {
+  const chatId = getChatId();
+  if (!chatId) return;
+  try {
+    await nightshift.runNightShift();
+    console.log('03:00 Night Shift tahlili muvaffaqiyatli bajarildi.');
+  } catch (e) {
+    console.error('03:00 night shift cron error:', e.message);
   }
 }, { timezone: 'Asia/Tashkent' });
 

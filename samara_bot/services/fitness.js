@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const obsidian = require('./obsidian');
 const streak = require('./streak');
+const rpg = require('./rpg');
 
 const VAULT_PATH = process.env.OBSIDIAN_VAULT_PATH || path.join(__dirname, '..', '..', 'Obsidian_Vault');
 const FITNESS_FILE = path.join(__dirname, 'fitness_data.json');
@@ -104,11 +105,14 @@ function recordWorkout({ description, rawText = '' }) {
   });
   obsidian.completeTask('sport');
 
+  const xpRes = rpg.addXp('strength', 50, `Sport mashg'uloti: ${description.substring(0, 30)}`);
+
   return {
     success: true,
     streakCount: sRes.count,
     newPrMessage,
     workoutEntry,
+    xpRes,
   };
 }
 

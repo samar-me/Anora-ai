@@ -16,6 +16,14 @@ const dream = require('./dream');
 const water = require('./water');
 const incubator = require('./incubator');
 const briefing = require('./briefing');
+const rpg = require('./rpg');
+const arena = require('./arena');
+const deepwork = require('./deepwork');
+const crm2 = require('./crm2');
+const architect = require('./architect');
+const publisher = require('./publisher');
+const vaultRag = require('./vault_rag');
+const nightshift = require('./nightshift');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -378,6 +386,89 @@ const tools = [
           properties: {},
         },
       },
+      {
+        name: 'get_rpg_status',
+        description: 'Samarning Solo Leveling status oynasi, darajasi (Level), XP va ko\'rsatkichlarini (Kuch, Aql, Muhandislik, Intizom) ko\'rish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'get_leetcode_problem',
+        description: 'Bugungi kunlik FAANG (Google, Meta, Amazon) algoritmlar va LeetCode masalasini olish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {},
+        },
+      },
+      {
+        name: 'evaluate_code_solution',
+        description: 'Samarning dasturlash kodini Big-O Time va Space complexity bo\'yicha tahlil qilish va baholash.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            code: { type: Type.STRING, description: 'Dasturlash kodi' },
+            problem: { type: Type.STRING, description: 'Masala nomi (ixtiyoriy)' },
+          },
+          required: ['code'],
+        },
+      },
+      {
+        name: 'start_deep_work',
+        description: 'Deep Work kiber-konsentratsiya sprintini boshlash (masalan: 45 daqiqa yoki 60 daqiqa).',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            minutes: { type: Type.NUMBER, description: 'Sprint davomiyligi (daqiqalarda)' },
+            goal: { type: Type.STRING, description: 'Sprint maqsadi' },
+          },
+        },
+      },
+      {
+        name: 'generate_parent_report',
+        description: 'O\'quv markazidagi darsdan so\'ng har bir o\'quvchining ota-onasi uchun chiroyli rasmiy O\'zbekcha hisobot tayyorlash.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            notes: { type: Type.STRING, description: 'Dars va o\'quvchilar haqidagi qisqa qaydlar' },
+          },
+          required: ['notes'],
+        },
+      },
+      {
+        name: 'design_architecture',
+        description: 'Loyiha uchun tizim arxitekturasi, Mermaid diagrammasi, database jadvallari va API spetsifikatsiyasini ishlab chiqish.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            idea: { type: Type.STRING, description: 'Loyiha yoki dastur g\'oyasi' },
+          },
+          required: ['idea'],
+        },
+      },
+      {
+        name: 'generate_social_post',
+        description: 'Samarning Telegram kanali yoki LinkedIn profili uchun professional texnik yoki motivatsion post tayyorlash.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            topic: { type: Type.STRING, description: 'Mavzu yoki o\'rganilgan bilim' },
+          },
+          required: ['topic'],
+        },
+      },
+      {
+        name: 'recall_memory',
+        description: 'Samarning Obsidian xotirasidagi qaydlar, o\'quvchilar, moliya yoki sport ma\'lumotlarini semantik qidirib eslash.',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            question: { type: Type.STRING, description: 'Eslash kerak bo\'lgan savol yoki mavzu' },
+          },
+          required: ['question'],
+        },
+      },
     ],
   },
 ];
@@ -723,6 +814,51 @@ async function executeTool(name, args, context = {}) {
       case 'get_morning_briefing': {
         const res = await briefing.generateMorningBriefing();
         return { success: true, briefing: res.text };
+      }
+
+      case 'get_rpg_status': {
+        return { success: true, summary: rpg.getStatusCard() };
+      }
+
+      case 'get_leetcode_problem': {
+        const p = arena.getDailyProblem();
+        return { success: true, problem: p.text };
+      }
+
+      case 'evaluate_code_solution': {
+        const res = await arena.evaluateSolution(args.code, args.problem || 'LeetCode Masalasi');
+        return { success: true, review: res.responseText };
+      }
+
+      case 'start_deep_work': {
+        if (context.botInstance && context.userId) {
+          const res = deepwork.startFocusSession(context.botInstance, context.userId, args.minutes || 45, args.goal || 'Deep Work');
+          return { success: true, message: `🎯 ${res.minutes} daqiqalik Deep Work boshlandi! Tugash vaqti: ${res.endTimeStr}. Chalg'imasdan kod yozishga sho'ng'ing!` };
+        }
+        return { success: false, message: 'Bot aloqasi topilmadi.' };
+      }
+
+      case 'generate_parent_report': {
+        const res = await crm2.generateParentReports(args.notes);
+        return { success: true, reports: res.reportsText };
+      }
+
+      case 'design_architecture': {
+        const res = await architect.designSystemArchitecture(args.idea);
+        return {
+          success: true,
+          message: `📐 "${res.title}" arxitekturasi ishlab chiqildi va Obsidian Projects bo'limiga saqlandi! (${res.fileName})\n\n${res.archDoc}`,
+        };
+      }
+
+      case 'generate_social_post': {
+        const res = await publisher.generateTechPost(args.topic);
+        return { success: true, post: res.postText };
+      }
+
+      case 'recall_memory': {
+        const res = await vaultRag.recallFromVault(args.question);
+        return { success: true, answer: res.answer, sources: res.matchedFiles };
       }
 
       default:
