@@ -261,6 +261,46 @@ bot.command('mashq', async (ctx) => {
   await ctx.reply(p, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
 });
 
+// /ovoz command (Voice selection for female voices)
+bot.command(['ovoz', 'voice'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const current = tts.getActiveVoiceProfile();
+
+  const kb = new InlineKeyboard()
+    .text('🌸 Madina (Mayin & Shirin)', 'set_voice_sweet')
+    .row()
+    .text('🌺 Madina (Klassik)', 'set_voice_classic')
+    .row()
+    .text('🌟 Emel (Turkiy mayin)', 'set_voice_soft_turk')
+    .row()
+    .text('👑 Jenny (Inglizcha go\'zal)', 'set_voice_jenny');
+
+  let msg = `🎙️ **OVOZ SOZLAMALARI (QIZLAR OVOZI)**\n\n`;
+  msg += `Hozirgi faol ovoz: **${current.name}**\n\n`;
+  msg += `Quyidagi variantlardan birini tanlang. Tanlashingiz bilan bot yangi ovozda sizga audio salom yo'llaydi: 👇`;
+
+  await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: kb });
+});
+
+bot.callbackQuery(/^set_voice_(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const voiceId = ctx.match[1];
+  const profile = tts.setActiveVoiceProfile(voiceId);
+
+  if (profile) {
+    await ctx.reply(`✅ **Ovoz o'zgartirildi:** ${profile.name}\n_${profile.desc}_`, {
+      parse_mode: 'Markdown',
+      reply_markup: mainKeyboard,
+    });
+
+    try {
+      const sampleText = `Salom Samar! Yangi ovozim sizga yoqdimi? Endi sizga doim shu mayin va chiroyli ovozda gapiraman.`;
+      const voice = await tts.textToVoice(sampleText, 'uz', voiceId);
+      if (voice) await ctx.replyWithVoice(voice);
+    } catch (_) {}
+  }
+});
+
 // Callback queries for School Check-in
 bot.callbackQuery('school_yes', async (ctx) => {
   await ctx.answerCallbackQuery();
@@ -489,6 +529,26 @@ bot.on('message:text', async (ctx) => {
   if (lower === 'strategiya' || lower === 'roadmap' || lower === 'strategiyam' || lower === 'rivojlanish rejasi') {
     const s = strategy.getStrategySummary();
     await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+    return;
+  }
+
+  // Ovoz sozlamalari
+  if (lower.includes('ovozni ozgartir') || lower.includes('ovoz almashtir') || lower.includes('boshqa ovoz') || lower === 'ovoz' || lower === 'ovozlar') {
+    const current = tts.getActiveVoiceProfile();
+    const kb = new InlineKeyboard()
+      .text('🌸 Madina (Mayin & Shirin)', 'set_voice_sweet')
+      .row()
+      .text('🌺 Madina (Klassik)', 'set_voice_classic')
+      .row()
+      .text('🌟 Emel (Turkiy mayin)', 'set_voice_soft_turk')
+      .row()
+      .text('👑 Jenny (Inglizcha go\'zal)', 'set_voice_jenny');
+
+    let msg = `🎙️ **OVOZ SOZLAMALARI (QIZLAR OVOZI)**\n\n`;
+    msg += `Hozirgi faol ovoz: **${current.name}**\n\n`;
+    msg += `O'zingizga yoqqan ovozni tanlang: 👇`;
+
+    await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: kb });
     return;
   }
 
