@@ -558,6 +558,41 @@ bot.command(['tungi', 'nightshift'], async (ctx) => {
   }
 });
 
+// /logo command (Send official Anora & Samar AI logo)
+bot.command('logo', async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const logoPath = path.join(__dirname, 'logo.jpg');
+  if (fs.existsSync(logoPath)) {
+    await ctx.replyWithPhoto(new InputFile(logoPath), {
+      caption: `👑 **Anora AI & Samar — Rasmiy Brend Logosi**\n\nUshbu logoni Telegram botingizga profil rasmi (avatar) qilib qo'yish uchun:\n1. @BotFather botiga kiring\n2. \`/setuserpic\` buyrug'ini yozing\n3. Botingizni tanlang (@samara_my_ai_bot)\n4. Shu rasmni yuboring!\n\nBir zumda botingiz chiroyli logoli bo'ladi! 🚀`,
+      parse_mode: 'Markdown',
+      reply_markup: mainKeyboard
+    });
+  } else {
+    await ctx.reply('⚠️ Logo fayli topilmadi.');
+  }
+});
+
+// /server command (Server status and 24/7 deployment guide)
+bot.command(['server', 'host'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const uptimeHours = Math.floor(process.uptime() / 3600);
+  const uptimeMinutes = Math.floor((process.uptime() % 3600) / 60);
+  const memUsed = Math.round(process.memoryUsage().rss / 1024 / 1024);
+
+  let msg = `🖥️ **ANORA AI SERVER VA ISH HOLATI**\n\n`;
+  msg += `🟢 **Holat:** Faol va 24/7 ishlamoqda\n`;
+  msg += `⏱️ **Ish vaqti (Uptime):** ${uptimeHours} soat ${uptimeMinutes} daqiqa\n`;
+  msg += `💾 **Xotira sarfi (RAM):** ${memUsed} MB / Optimal\n`;
+  msg += `🐳 **Docker & PM2:** 100% Moslashtirilgan\n\n`;
+  msg += `🚀 **Bulutli serverga (Render/Railway/VPS) yuklash:**\n`;
+  msg += `1. GitHub repozitoriyangizga push qiling\n`;
+  msg += `2. Render.com yoki VPS serveringizga ulab, \`npm start\` yoki \`docker compose up -d\` bering!\n`;
+  msg += `Barcha qadamlar \`DEPLOYMENT_GUIDE.md\` faylida yozilgan.`;
+
+  await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
 // /portfolio or /sayt command (Dynamic Developer Portfolio & Live Sync)
 bot.command(['portfolio', 'sayt'], async (ctx) => {
   saveChatId(ctx.chat.id);

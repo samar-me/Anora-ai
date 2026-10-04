@@ -59,6 +59,7 @@
   </script>
 
   <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -126,9 +127,7 @@
   <header class="sticky top-0 z-40 glass border-b border-white/5 py-3.5 px-4 md:px-10 flex justify-between items-center transition-all duration-200">
     <!-- Brand / Logo -->
     <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-indigo-500 flex items-center justify-center font-extrabold text-white shadow-lg shadow-brand-600/30 ring-1 ring-white/20">
-        S
-      </div>
+      <img src="logo.jpg" alt="Samar Logo" class="w-10 h-10 rounded-xl object-cover ring-2 ring-brand-500/50 shadow-lg shadow-brand-600/30" />
       <div>
         <div class="flex items-center gap-1.5">
           <h1 class="font-extrabold text-base md:text-lg leading-tight tracking-tight text-white" id="brandName">Samar</h1>
@@ -179,7 +178,13 @@
   <!-- Hero Section -->
   <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 space-y-24">
 
-    <section id="about" class="text-center space-y-6 pt-4">
+    <section id="about" class="text-center space-y-5 pt-4">
+      <!-- Animated Avatar Logo -->
+      <div class="relative w-24 h-24 mx-auto mb-1 group cursor-pointer" onclick="playLevelUp()">
+        <div class="absolute inset-0 bg-gradient-to-tr from-brand-600 to-indigo-500 rounded-3xl blur-xl opacity-60 group-hover:opacity-90 transition-opacity"></div>
+        <img src="logo.jpg" alt="Samar AI Logo" class="relative w-24 h-24 rounded-3xl object-cover ring-2 ring-brand-400/80 shadow-2xl mx-auto transform group-hover:scale-105 transition-transform" />
+      </div>
+
       <!-- Status Badge -->
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass border border-brand-500/30 text-brand-300 text-xs font-semibold shadow-inner">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
