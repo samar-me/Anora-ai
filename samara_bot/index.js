@@ -40,6 +40,7 @@ const quizGen = require('./services/quiz_gen');
 const githubSync = require('./services/github_sync');
 const telegramUser = require('./services/telegram_user');
 const instagramMgr = require('./services/instagram_mgr');
+const pdfFinder = require('./services/pdf_finder');
 
 require('dotenv').config();
 
@@ -146,11 +147,12 @@ Menga oddiy so'zlashuv tilida yozing:
 • *«Yangi g'oya: ...»* (💡 startap inkubatori)
 • *«Escalade fondi»* (🚗 orzu jamg'armasi)
 • *«Brifing»* (🎙 tongi audio brifing)
+• *«Albert Enshteyn kitobini PDF variantini top»* (📚 Deep Web PDF)
 • *«Ali menga 100 ming qarz berishi kerak»* (qarz)
 • *«Yangi o'quvchi: Jasur, 14 yosh...»* (CRM)
 • *«20 daqiqadan keyin choynakni eslat»* (taymer)
 
-Buyruqlar: /brifing, /suv, /orzu, /goya, /sport, /english, /ovoz`;
+Buyruqlar: /pdf, /brifing, /suv, /orzu, /goya, /sport, /english, /ovoz`;
 
   await ctx.reply(welcome, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
 });
@@ -233,11 +235,62 @@ bot.command('profil', async (ctx) => {
   await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
 });
 
-// /kitob command
+// /kitob command (Summary or Book Search)
 bot.command('kitob', async (ctx) => {
   saveChatId(ctx.chat.id);
+  const query = ctx.message.text.replace(/^\/kitob\s*/i, '').trim();
+  if (query) {
+    await ctx.reply(`🔍 «${query}» global ochiq kutubxonalardan qidirilmoqda va PDF tayyorlanmoqda... ⏳`);
+    await ctx.replyWithChatAction('upload_document');
+    try {
+      const res = await pdfFinder.findAndFetchBookPdf(query);
+      if (res.found && res.fileBuffer) {
+        return ctx.replyWithDocument(new InputFile(res.fileBuffer, res.fileName), {
+          caption: `📖 **${res.title}**\n👤 Muallif: ${res.author}\n📅 Yil: ${res.year}\n🏛️ Manba: ${res.source}\n💾 Hajmi: ${res.sizeMB} MB\n\n_Maroqli mutolaa tilayman, Samar!_`,
+          parse_mode: 'Markdown',
+        });
+      } else if (res.found && res.downloadUrl) {
+        return ctx.reply(`📖 **${res.title}** topildi!\n👤 Muallif: ${res.author}\n💾 Hajmi: ${res.sizeMB} MB\n\n📥 [To'g'ridan-to'g'ri yuklab olish uchun bosing](${res.downloadUrl})`, { parse_mode: 'Markdown' });
+      } else {
+        return ctx.reply(res.message || `Kechirasiz, «${query}» bo'yicha ochiq PDF topilmadi.`);
+      }
+    } catch (e) {
+      return ctx.reply(`PDF qidirishda xatolik: ${e.message}`);
+    }
+  }
   const s = books.getReadingSummary();
   await ctx.reply(s, { parse_mode: 'Markdown', reply_markup: mainKeyboard });
+});
+
+// /pdf command (Autonomous Deep Web Book & PDF Finder)
+bot.command(['pdf', 'kitob_pdf'], async (ctx) => {
+  saveChatId(ctx.chat.id);
+  const query = ctx.message.text.replace(/^\/(pdf|kitob_pdf)\s*/i, '').trim();
+  if (!query) {
+    return ctx.reply('📚 **Kitob yoki PDF qidirish:**\nQidirmoqchi bo\'lgan kitob yoki ilmiy asar nomini yozing.\n\nMasalan:\n• `/pdf Albert Einstein Relativity`\n• `/pdf Clean Code Robert Martin`\n• `/pdf Deep Learning Ian Goodfellow`', { parse_mode: 'Markdown' });
+  }
+
+  await ctx.reply(`🔍 «${query}» global ochiq kutubxonalardan qidirilmoqda va PDF tayyorlanmoqda... ⏳`);
+  await ctx.replyWithChatAction('upload_document');
+
+  try {
+    const res = await pdfFinder.findAndFetchBookPdf(query);
+    if (!res.found) {
+      return ctx.reply(res.message || `Kechirasiz, «${query}» bo'yicha ochiq PDF topilmadi.`);
+    }
+
+    if (res.fileBuffer) {
+      await ctx.replyWithDocument(new InputFile(res.fileBuffer, res.fileName), {
+        caption: `📖 **${res.title}**\n👤 Muallif: ${res.author}\n📅 Yil: ${res.year}\n🏛️ Manba: ${res.source}\n💾 Hajmi: ${res.sizeMB} MB\n\n_Maroqli mutolaa tilayman, Samar!_`,
+        parse_mode: 'Markdown',
+      });
+    } else if (res.downloadUrl) {
+      await ctx.reply(`📖 **${res.title}** topildi!\n👤 Muallif: ${res.author}\n💾 Hajmi: ${res.sizeMB} MB\n\n📥 [To'g'ridan-to'g'ri yuklab olish uchun bosing](${res.downloadUrl})`, { parse_mode: 'Markdown' });
+    }
+  } catch (err) {
+    console.error('PDF command error:', err);
+    await ctx.reply(`PDF qidirishda xatolik: ${err.message}`);
+  }
 });
 
 // /haftalik command (Weekly Strategic Audit)
@@ -964,9 +1017,9 @@ bot.on(['message:voice', 'message:audio'], async (ctx) => {
       return;
     }
 
-    const { replyText, foundMediaPath } = await ai.processUserMessage(
+    const { replyText, foundMediaPath, foundBookPdf } = await ai.processUserMessage(
       ctx.from.id,
-      "Samarning ovozli xabari (Qashqadaryo, Yakkabog' shevasida). Diqqat bilan tingla. Agar qarz (masalan: ukamga, akamga, do'stimga), xarajat, sport yoki kitob aytilgan bo'lsa, mos funksiyani chaqir.",
+      "Samarning ovozli xabari (Qashqadaryo, Yakkabog' shevasida). Diqqat bilan tingla. Agar qarz (masalan: ukamga, akamga, do'stimga), xarajat, sport, kitob yoki internetdan PDF qidirish aytilgan bo'lsa, mos funksiyani chaqir.",
       audioBuffer,
       null,
       bot
@@ -988,6 +1041,15 @@ bot.on(['message:voice', 'message:audio'], async (ctx) => {
       } else {
         await ctx.replyWithPhoto(new InputFile(foundMediaPath));
       }
+    }
+
+    if (foundBookPdf && foundBookPdf.fileBuffer) {
+      await ctx.replyWithDocument(new InputFile(foundBookPdf.fileBuffer, foundBookPdf.fileName), {
+        caption: `📖 **${foundBookPdf.title}**\n👤 Muallif: ${foundBookPdf.author || "Noma'lum"}\n💾 Hajmi: ${foundBookPdf.sizeMB} MB\n\n_Maroqli mutolaa tilayman, Samar!_`,
+        parse_mode: 'Markdown',
+      });
+    } else if (foundBookPdf && foundBookPdf.downloadUrl) {
+      await ctx.reply(`📖 **${foundBookPdf.title}**\n💾 Hajmi: ${foundBookPdf.sizeMB} MB\n📥 [To'g'ridan-to'g'ri yuklab olish](${foundBookPdf.downloadUrl})`, { parse_mode: 'Markdown' });
     }
   } catch (err) {
     console.error('Audio xatosi:', err);
@@ -1331,10 +1393,35 @@ bot.on('message:text', async (ctx) => {
     }
   }
 
+  // 16.5. Direct PDF / Kitob Qidiruvi ("pdf top:", "kitob top:", "pdf qidir:")
+  if (lower.startsWith('pdf top:') || lower.startsWith('kitob top:') || lower.startsWith('pdf qidir:')) {
+    const q = text.split(':')[1]?.trim();
+    if (q) {
+      await ctx.reply(`🔍 «${q}» internetdan qidirilmoqda va yuklanmoqda... ⏳`);
+      await ctx.replyWithChatAction('upload_document');
+      try {
+        const res = await pdfFinder.findAndFetchBookPdf(q);
+        if (res.found && res.fileBuffer) {
+          await ctx.replyWithDocument(new InputFile(res.fileBuffer, res.fileName), {
+            caption: `📖 **${res.title}**\n👤 Muallif: ${res.author}\n📅 Yil: ${res.year}\n🏛️ Manba: ${res.source}\n💾 Hajmi: ${res.sizeMB} MB\n\n_Maroqli mutolaa tilayman, Samar!_`,
+            parse_mode: 'Markdown',
+          });
+        } else if (res.found && res.downloadUrl) {
+          await ctx.reply(`📖 **${res.title}** topildi!\n💾 Hajmi: ${res.sizeMB} MB\n📥 [To'g'ridan-to'g'ri yuklab olish](${res.downloadUrl})`, { parse_mode: 'Markdown' });
+        } else {
+          await ctx.reply(res.message || 'PDF topilmadi.');
+        }
+      } catch (e) {
+        await ctx.reply(`Xatolik: ${e.message}`);
+      }
+      return;
+    }
+  }
+
   // 17. General text message & AI processing
   await ctx.replyWithChatAction('typing');
   try {
-    const { replyText, foundMediaPath } = await ai.processUserMessage(
+    const { replyText, foundMediaPath, foundBookPdf } = await ai.processUserMessage(
       ctx.from.id,
       text,
       null,
@@ -1358,6 +1445,16 @@ bot.on('message:text', async (ctx) => {
       } else {
         await ctx.replyWithPhoto(new InputFile(foundMediaPath));
       }
+    }
+
+    // If AI found Book PDF requested by user
+    if (foundBookPdf && foundBookPdf.fileBuffer) {
+      await ctx.replyWithDocument(new InputFile(foundBookPdf.fileBuffer, foundBookPdf.fileName), {
+        caption: `📖 **${foundBookPdf.title}**\n👤 Muallif: ${foundBookPdf.author || "Noma'lum"}\n💾 Hajmi: ${foundBookPdf.sizeMB} MB\n\n_Maroqli mutolaa tilayman, Samar!_`,
+        parse_mode: 'Markdown',
+      });
+    } else if (foundBookPdf && foundBookPdf.downloadUrl) {
+      await ctx.reply(`📖 **${foundBookPdf.title}**\n💾 Hajmi: ${foundBookPdf.sizeMB} MB\n📥 [To'g'ridan-to'g'ri yuklab olish](${foundBookPdf.downloadUrl})`, { parse_mode: 'Markdown' });
     }
   } catch (err) {
     console.error('Xabar xatosi:', err);

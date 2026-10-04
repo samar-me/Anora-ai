@@ -3,4 +3,5 @@ node_modules/
 samara_bot/node_modules/
 samara_bot/.env
 samara_bot/backups/
+samara_bot/downloads/
 *.log

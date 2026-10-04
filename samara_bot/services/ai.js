@@ -30,6 +30,7 @@ const quizGen = require('./quiz_gen');
 const githubSync = require('./github_sync');
 const telegramUser = require('./telegram_user');
 const instagramMgr = require('./instagram_mgr');
+const pdfFinder = require('./pdf_finder');
 require('dotenv').config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -542,6 +543,17 @@ const tools = [
           required: ['topic'],
         },
       },
+      {
+        name: 'find_book_pdf',
+        description: 'Internet kutubxonalaridan kitob, qo\'llanma yoki ilmiy maqolaning PDF variantini qidirish va yuklab olish. Masalan: "Albert Einstein kitobini top", "Clean Code pdf kerak", "Python bo\'yicha kitob top".',
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            query: { type: Type.STRING, description: 'Qidirilayotgan kitob nomi, muallifi yoki mavzusi' },
+          },
+          required: ['query'],
+        },
+      },
     ],
   },
 ];
@@ -974,6 +986,19 @@ async function executeTool(name, args, context = {}) {
         return { success: true, post: res.carouselText };
       }
 
+      case 'find_book_pdf': {
+        const res = await pdfFinder.findAndFetchBookPdf(args.query);
+        if (res.found) {
+          return {
+            success: true,
+            message: `"${res.title}" (${res.author}) kitobi topildi! Hajmi: ${res.sizeMB} MB. PDF hujjati Telegramga yuborilmoqda.`,
+            bookPdf: res,
+          };
+        } else {
+          return { success: false, message: res.message };
+        }
+      }
+
       default:
         return { success: false, error: `Noma'lum: ${name}` };
     }
@@ -1047,6 +1072,7 @@ async function processUserMessage(userId, userMessage, audioBuffer = null, image
 
       let response = await chat.sendMessage({ message: messageContent });
       let foundMediaPath = null;
+      let foundBookPdf = null;
 
       for (let step = 0; step < 5; step++) {
         if (!response.functionCalls || response.functionCalls.length === 0) {
@@ -1058,6 +1084,9 @@ async function processUserMessage(userId, userMessage, audioBuffer = null, image
           const result = await executeTool(fc.name, fc.args, { userId, botInstance });
           if (fc.name === 'find_media' && result.foundFile) {
             foundMediaPath = result.foundFile;
+          }
+          if (fc.name === 'find_book_pdf' && result.bookPdf) {
+            foundBookPdf = result.bookPdf;
           }
           functionResponses.push({
             functionResponse: {
@@ -1087,7 +1116,7 @@ async function processUserMessage(userId, userMessage, audioBuffer = null, image
         addToUserHistory(userId, 'model', replyText);
       }
 
-      return { replyText, foundMediaPath };
+      return { replyText, foundMediaPath, foundBookPdf };
     } catch (err) {
       console.warn(`Model ${modelName} notice:`, err.message);
       lastError = err;
