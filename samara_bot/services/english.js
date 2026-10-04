@@ -126,7 +126,7 @@ function getDailyEnglishMission() {
 async function processEnglishTurn(aiService, userId, userMessage, isVoice = false) {
   const mission = getDailyEnglishMission();
 
-  const prompt = `You are "Coach Samara", a world-class English & Tech Career Coach working with Samar, a 16-year-old high-potential software engineer from Uzbekistan.
+  const prompt = `You are "Coach Anora", a world-class English & Tech Career Coach working with Samar, a 16-year-old high-potential software engineer from Uzbekistan.
 Today's Theme: "${mission.topic}".
 
 User's English input:

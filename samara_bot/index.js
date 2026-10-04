@@ -89,7 +89,7 @@ bot.command('start', async (ctx) => {
 
   const welcome = `Salom, ${ctx.from.first_name || 'do\'stim'}! 🦁
 
-Men **Samara AI** — shaxsiy yordamchingizman.
+Men **Anora AI** — shaxsiy yordamchingiz va murabbiyingizman. 🌸
 
 Menga oddiy so'zlashuv tilida yozing:
 • *«15 ming tushlikka»* (xarajat)
@@ -294,7 +294,7 @@ bot.callbackQuery(/^set_voice_(.+)$/, async (ctx) => {
     });
 
     try {
-      const sampleText = `Salom Samar! Yangi ovozim sizga yoqdimi? Endi sizga doim shu mayin va chiroyli ovozda gapiraman.`;
+      const sampleText = `Salom Samar! Men Anoraman, yangi ovozim sizga yoqdimi? Endi sizga doim shu mayin va chiroyli ovozda gapiraman.`;
       const voice = await tts.textToVoice(sampleText, 'uz', voiceId);
       if (voice) await ctx.replyWithVoice(voice);
     } catch (_) {}
@@ -872,9 +872,9 @@ cron.schedule('0 23 * * *', async () => {
 }, { timezone: 'Asia/Tashkent' });
 
 // Start bot
-console.log('🚀 Samara AI barcha aqlli modullar bilan ishga tushmoqda...');
+console.log('🚀 Anora AI barcha aqlli modullar bilan ishga tushmoqda...');
 bot.start({
   onStart: (botInfo) => {
-    console.log(`✅ Samara AI muvaffaqiyatli faol: @${botInfo.username}`);
+    console.log(`✅ Anora AI muvaffaqiyatli faol: @${botInfo.username}`);
   },
 });

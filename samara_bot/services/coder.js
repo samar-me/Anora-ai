@@ -43,7 +43,7 @@ function recordCodeSnippet(title, solution) {
  * Reviews and debugs code with senior-level clarity
  */
 async function debugCode(aiService, userId, codeText) {
-  const prompt = `Sen Samara AI — Samarning shaxsiy Katta Dasturchi Ustozisan (Senior Software Engineer & Mentor).
+  const prompt = `Sen Anora AI — Samarning shaxsiy Katta Dasturchi Ustozisan (Senior Software Engineer & Mentor).
 Samar 16 yoshda, u kelajakda kuchli dasturchi bo'lishga intilmoqda.
 
 Foydalanuvchi quyidagi kod yoki xatolik bo'yicha yordam so'ramoqda:

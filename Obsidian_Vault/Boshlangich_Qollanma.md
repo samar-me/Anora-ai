@@ -1,4 +1,4 @@
-# 🧠 Samara AI — Sizning Shaxsiy "Ikkinchi Miya" (Second Brain) Tizimingiz
+# 🧠 Anora AI — Sizning Shaxsiy "Ikkinchi Miya" (Second Brain) Tizimingiz
 
 Xush kelibsiz! Ushbu tizim sizning kundalik hayotingiz, rejalaringiz, xarajatlaringiz va fikrlaringizni tartibli boshqarish uchun yaratilgan.
 
@@ -27,4 +27,4 @@ Xush kelibsiz! Ushbu tizim sizning kundalik hayotingiz, rejalaringiz, xarajatlar
 - **`Memories/`** — Muhim maqsadlar va shaxsiy eslatmalar.
 
 ---
-*Samara AI Agent bilan birgalikda yaratildi.*
+*Anora AI Agent bilan birgalikda yaratildi.*

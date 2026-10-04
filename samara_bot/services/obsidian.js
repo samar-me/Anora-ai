@@ -46,7 +46,7 @@ function ensureTodayNote() {
 
 ## 📝 Fikrlar va Eslatmalar
 
-## 🤖 Samara AI Murabbiy Xulosasi
+## 🤖 Anora AI Murabbiy Xulosasi
 `;
     fs.writeFileSync(filePath, template, 'utf8');
   }

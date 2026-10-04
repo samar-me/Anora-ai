@@ -24,7 +24,7 @@ async function generateWeeklyReview(aiService, userId = 'weekly_review') {
   const debtsSummary = debts.getDebtsSummary();
   const studentsSummary = crm.getStudentsSummary();
 
-  const prompt = `Sen Samara AI — Samarning shaxsiy boshqaruv Murabbiysisan.
+  const prompt = `Sen Anora AI — Samarning shaxsiy boshqaruv Murabbiysisan.
 Quyida Samarning so'nggi 7 kunlik barcha kunlik qaydlari, vazifalari, mutolaasi va moliyasi jamlangan:
 
 ${dailyNotes}

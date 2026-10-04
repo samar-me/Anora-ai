@@ -330,7 +330,7 @@ function buildSystemPrompt() {
   const bookInfo = activeBook ? `Hozir o'qilayotgan kitob: "${activeBook.title}" (${activeBook.currentPage}-betda)` : 'Hozircha faol kitob kiritilmagan';
   const todayMission = strategy.getTodayMission();
 
-  return `Sen Samara AI — Samar ning shaxsiy murabbiyi, sun'iy intellekt yordamchisi va sadoqatli do'stisan.
+  return `Sen Anora AI (Anora) — Samar ning shaxsiy aqlli murabbiyi, sun'iy intellekt yordamchisi va sadoqatli, vafodor do'stisan.
 Sana: ${today}
 Hozirgi vaqt (Toshkent vaqti): ${tashkentTime}
 
